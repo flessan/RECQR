@@ -6,7 +6,7 @@ import { QrCode, ScanLine, Sparkles, ArrowRight } from "lucide-react";
 
 export default function Hero() {
   // Material You 3 Standard & Emphasized Easing
-  const m3Easing = [0.2, 0, 0, 1];
+  const m3Easing: [number, number, number, number] = [0.2, 0, 0, 1];
 
   return (
     <section className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-[#FEF7FF] text-[#1D1B20] selection:bg-[#EADDFF]">
