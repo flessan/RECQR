@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Material Design 3 - Light Theme */
+  --color-primary: #6750A4;
+  --color-on-primary: #FFFFFF;
+  --color-primary-container: #EADDFF;
+  --color-on-primary-container: #21005D;
+  
+  --color-secondary: #625B71;
+  --color-on-secondary: #FFFFFF;
+  --color-secondary-container: #E8DEF8;
+  --color-on-secondary-container: #1D192B;
+  
+  --color-tertiary: #7D5260;
+  --color-on-tertiary: #FFFFFF;
+  --color-tertiary-container: #FFD8E4;
+  --color-on-tertiary-container: #31111D;
+  
+  --color-error: #B3261E;
+  --color-on-error: #FFFFFF;
+  --color-error-container: #F9DEDC;
+  --color-on-error-container: #410E0B;
+  
+  --color-background: #FFFBFE;
+  --color-on-background: #1C1B1F;
+  
+  --color-surface: #FFFBFE;
+  --color-on-surface: #1C1B1F;
+  --color-surface-variant: #E7E0EC;
+  --color-on-surface-variant: #49454F;
+  
+  --color-outline: #79747E;
+  --color-outline-variant: #CAC4D0;
+  
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-low: #F7F2FA;
+  --color-surface-container: #F2ECF6;
+  --color-surface-container-high: #ECE6F0;
+  --color-surface-container-highest: #E6E0E9;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+}
+
+/* Dark theme */
+:root.dark {
+  --color-primary: #D0BCFF;
+  --color-on-primary: #371E73;
+  --color-primary-container: #4F378B;
+  --color-on-primary-container: #EADDFF;
+  
+  --color-secondary: #CCC2DC;
+  --color-on-secondary: #332D41;
+  --color-secondary-container: #4A4458;
+  --color-on-secondary-container: #E8DEF8;
+  
+  --color-tertiary: #EFB8C8;
+  --color-on-tertiary: #492532;
+  --color-tertiary-container: #633B48;
+  --color-on-tertiary-container: #FFD8E4;
+  
+  --color-error: #F2B8B5;
+  --color-on-error: #601410;
+  --color-error-container: #8C1D18;
+  --color-on-error-container: #F9DEDC;
+  
+  --color-background: #141218;
+  --color-on-background: #E6E1E5;
+  
+  --color-surface: #141218;
+  --color-on-surface: #E6E1E5;
+  --color-surface-variant: #49454F;
+  --color-on-surface-variant: #CAC4D0;
+  
+  --color-outline: #938F99;
+  --color-outline-variant: #49454F;
+  
+  --color-surface-container-lowest: #0F0D13;
+  --color-surface-container-low: #1D1B20;
+  --color-surface-container: #211F26;
+  --color-surface-container-high: #2B2930;
+  --color-surface-container-highest: #36343B;
+}
+
+@layer components {
+  /* Material Design 3 Elevation System */
+  .md-elevation-0 {
+    box-shadow: none;
+  }
+  
+  .md-elevation-1 {
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3),
+                0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  }
+  
+  .md-elevation-2 {
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3),
+                0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  }
+  
+  .md-elevation-3 {
+    box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15),
+                0px 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* MD3 Button Styles */
+  .md-filled-button {
+    @apply bg-[var(--color-primary)] text-[var(--color-on-primary)];
+    @apply rounded-full px-6 py-2.5 font-medium;
+    @apply hover:shadow-md transition-all duration-200;
+  }
+  
+  .md-filled-tonal-button {
+    @apply bg-[var(--color-secondary-container)] text-[var(--color-on-secondary-container)];
+    @apply rounded-full px-6 py-2.5 font-medium;
+    @apply hover:shadow-md transition-all duration-200;
+  }
+  
+  .md-outlined-button {
+    @apply border-2 border-[var(--color-outline)];
+    @apply text-[var(--color-primary)];
+    @apply rounded-full px-6 py-2.5 font-medium;
+    @apply hover:bg-[var(--color-primary-container)] transition-all duration-200;
+  }
+  
+  .md-text-button {
+    @apply text-[var(--color-primary)];
+    @apply rounded-full px-6 py-2.5 font-medium;
+    @apply hover:bg-[var(--color-primary-container)] transition-all duration-200;
+  }
+  
+  /* MD3 Card */
+  .md-card {
+    @apply bg-[var(--color-surface-container-low)];
+    @apply rounded-[var(--radius-md)];
+    @apply shadow-md;
+    @apply overflow-hidden;
+  }
+  
+  /* MD3 Surface */
+  .md-surface {
+    @apply bg-[var(--color-surface)];
+    @apply text-[var(--color-on-surface)];
+  }
+  
+  .md-surface-variant {
+    @apply bg-[var(--color-surface-variant)];
+    @apply text-[var(--color-on-surface-variant)];
+  }
+}
+
+@layer utilities {
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-[var(--color-outline-variant)]/50;
+    @apply rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-[var(--color-outline)];
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-[var(--color-surface)];
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[var(--color-outline-variant)];
+    @apply rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-[var(--color-outline)];
+  }
+}

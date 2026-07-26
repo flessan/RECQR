@@ -1,0 +1,11 @@
+name = "qr-api"
+main = "src/index.ts"
+compatibility_date = "2024-03-20"
+
+[observability]
+enabled = true
+
+# You can configure custom domains when ready:
+# routes = [
+#   { pattern = "api.recqr.com", custom_domain = true }
+# ]
