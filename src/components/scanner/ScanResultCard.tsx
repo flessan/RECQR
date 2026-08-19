@@ -51,18 +51,18 @@ export default function ScanResultCard({ result, onScanAgain }: Props) {
 
   return (
     <div
-      className="rounded-2xl bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] p-5 sm:p-6"
+      className="ui-card p-5 sm:p-6"
       role="region"
       aria-label="Scan result"
     >
       <div className="flex items-center justify-between gap-3 mb-4">
-        <h3 className="text-lg font-bold text-[var(--color-on-surface)] flex items-center gap-2">
+        <h3 className="flex items-center gap-2 text-lg font-black tracking-tight text-[var(--color-on-surface)]">
           <TypeIcon type={result.type} />
           <span className="capitalize">{result.type}</span>
         </h3>
         <button
           onClick={onScanAgain}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary-container)] px-3 py-1.5 rounded-full transition-colors"
+          className="ui-btn ui-btn-ghost ui-btn-sm text-[var(--color-primary)]"
         >
           <RefreshCw className="w-4 h-4" />
           Scan again
@@ -111,7 +111,7 @@ export default function ScanResultCard({ result, onScanAgain }: Props) {
         ]} />
       )}
       {(!result.parsed || result.parsed.kind === "text") && (
-        <pre className="whitespace-pre-wrap break-words text-sm text-[var(--color-on-surface)] bg-[var(--color-surface-container)] rounded-xl p-4 font-sans">
+        <pre className="ui-card-flat whitespace-pre-wrap break-words p-4 font-sans text-sm text-[var(--color-on-surface)]">
           {result.raw}
         </pre>
       )}
@@ -208,9 +208,7 @@ function ActionButton({
     <button
       onClick={onClick}
       className={
-        primary
-          ? "inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-medium hover:opacity-90 transition-opacity"
-          : "inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-surface-container)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] text-sm font-medium hover:bg-[var(--color-surface-container-high)] transition-colors"
+        primary ? "ui-btn ui-btn-primary ui-btn-sm" : "ui-btn ui-btn-surface ui-btn-sm"
       }
     >
       {icon}
@@ -223,11 +221,11 @@ type KVRow = [string, string];
 
 function KV({ rows }: { rows: KVRow[] }) {
   return (
-    <dl className="space-y-2 bg-[var(--color-surface-container)] rounded-xl p-4">
+    <dl className="ui-card-flat space-y-2 p-4">
       {rows.map(([k, v]) => (
         <div key={k}>
-          <dt className="text-xs uppercase tracking-wide text-[var(--color-on-surface-variant)]">{k}</dt>
-          <dd className="text-sm text-[var(--color-on-surface)] break-all">{v || "—"}</dd>
+          <dt className="ui-label mb-0">{k}</dt>
+          <dd className="break-all text-sm font-semibold text-[var(--color-on-surface)]">{v || "—"}</dd>
         </div>
       ))}
     </dl>
@@ -247,11 +245,11 @@ function UrlBody({
   const u = result.parsed;
   return (
     <div className="space-y-3">
-      <div className="bg-[var(--color-surface-container)] rounded-xl p-4">
-        <div className="text-xs uppercase tracking-wide text-[var(--color-on-surface-variant)] mb-1">
+      <div className="ui-card-flat p-4">
+        <div className="ui-label">
           Website
         </div>
-        <div className="font-medium text-[var(--color-on-surface)] break-all">
+        <div className="break-all font-bold text-[var(--color-on-surface)]">
           {u.hostname}
         </div>
         <div className="text-xs text-[var(--color-on-surface-variant)] break-all mt-1">
@@ -259,7 +257,7 @@ function UrlBody({
         </div>
       </div>
       {!u.isSafe && (
-        <div className="flex items-start gap-2 p-3 rounded-xl bg-[var(--color-error-container)] text-[var(--color-on-error-container)] text-sm">
+        <div className="ui-card-flat flex items-start gap-2 border-[var(--color-error)] bg-[var(--color-error-container)] p-3 text-sm font-semibold text-[var(--color-on-error-container)]">
           <ShieldAlert className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <div>
             <strong>Unsafe link blocked.</strong> This URL uses a potentially
@@ -268,7 +266,7 @@ function UrlBody({
         </div>
       )}
       {u.isSafe && u.warnings.length > 0 && (
-        <div className="flex items-start gap-2 p-3 rounded-xl bg-yellow-100 text-yellow-900 dark:bg-yellow-900/30 dark:text-yellow-100 text-sm">
+        <div className="ui-card-flat ui-card-tertiary flex items-start gap-2 p-3 text-sm font-semibold">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <div>
             <strong>Proceed with caution.</strong> This link
@@ -284,7 +282,7 @@ function UrlBody({
       )}
       <button
         onClick={() => onCopy("url", u.href)}
-        className="text-xs text-[var(--color-primary)] hover:underline"
+        className="text-xs font-bold text-[var(--color-primary)] hover:underline"
       >
         {copiedKey === "url" ? "Copied full URL" : "Copy full URL"}
       </button>
@@ -308,9 +306,9 @@ function WifiBody({
   if (result.parsed?.kind !== "wifi") return null;
   const w = result.parsed;
   return (
-    <div className="bg-[var(--color-surface-container)] rounded-xl p-4 space-y-3">
+    <div className="ui-card-flat space-y-3 p-4">
       <div className="flex items-center gap-3">
-        <div className="w-11 h-11 rounded-full bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] flex items-center justify-center">
+        <div className="grid h-11 w-11 flex-none place-items-center rounded-2xl border-2 border-[var(--color-outline-variant)] bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]">
           <Wifi className="w-5 h-5" />
         </div>
         <div>
@@ -319,7 +317,7 @@ function WifiBody({
         </div>
       </div>
       <div>
-        <div className="text-xs uppercase tracking-wide text-[var(--color-on-surface-variant)] mb-1">Password</div>
+        <div className="ui-label">Password</div>
         <div className="flex items-center justify-between gap-2 bg-[var(--color-surface-container-high)] rounded-lg px-3 py-2">
           <code className="text-sm font-mono break-all">
             {w.password ? (reveal ? w.password : "•".repeat(Math.min(12, w.password.length))) : "None (open network)"}
@@ -366,11 +364,11 @@ function VCardBody({ result, onCopy, copiedKey }: { result: QRResult; onCopy: (k
   if (c.url) rows.push(["Website", c.url]);
   if (c.address) rows.push(["Address", c.address]);
   return (
-    <div className="bg-[var(--color-surface-container)] rounded-xl p-4 space-y-3">
+    <div className="ui-card-flat space-y-3 p-4">
       <KV rows={rows} />
       <button
         onClick={() => onCopy("card", result.raw)}
-        className="text-xs text-[var(--color-primary)] hover:underline"
+        className="text-xs font-bold text-[var(--color-primary)] hover:underline"
       >
         {copiedKey === "card" ? "Copied" : "Copy vCard data"}
       </button>

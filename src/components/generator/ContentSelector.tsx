@@ -50,22 +50,19 @@ export default function ContentSelector({
 }: Props) {
   return (
     <section className="space-y-4" aria-labelledby="content-heading">
-      <h2 id="content-heading" className="text-lg font-bold text-[var(--color-on-surface)] flex items-center gap-2">
-        <span className="bg-[var(--color-primary)] text-[var(--color-on-primary)] w-6 h-6 rounded-full inline-flex items-center justify-center text-sm">1</span>
+      <h2 id="content-heading" className="flex items-center gap-3 text-xl font-black tracking-tight text-[var(--color-on-surface)]">
+        <span className="ui-step">1</span>
         Complete the content
       </h2>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Content type">
         {PRESETS.map((p) => (
           <button
             key={p.id}
             type="button"
             onClick={() => onPreset(p.id)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-              preset === p.id
-                ? "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] border-[var(--color-primary)]"
-                : "bg-[var(--color-surface-container)] text-[var(--color-on-surface-variant)] border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-high)]"
-            }`}
+            aria-pressed={preset === p.id}
+            className={`ui-chip ${preset === p.id ? "is-active" : ""}`}
           >
             {p.icon}
             {p.label}
@@ -90,14 +87,14 @@ function field(
   const { type = "text", placeholder, ...rest } = extra || {};
   return (
     <label key={key} className="block">
-      <span className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">{label}</span>
+      <span className="ui-label">{label}</span>
       {type === "textarea" ? (
         <textarea
           value={value}
           onChange={(e) => onField(key, e.target.value)}
           placeholder={placeholder}
           rows={3}
-          className="w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none resize-none"
+          className="ui-field"
         />
       ) : (
         <input
@@ -105,7 +102,7 @@ function field(
           value={value}
           onChange={(e) => onField(key, e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+          className="ui-field"
           {...rest}
         />
       )}
@@ -158,7 +155,7 @@ function Fields({
         <>
           {field("To", "to", v("to"), onField, { type: "email", placeholder: "name@example.com" })}
           {field("Subject", "subject", v("subject"), onField)}
-          {field("Body", "body", v("body"), onField, { type: "textarea", className: "sm:col-span-2 w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none" })}
+          {field("Body", "body", v("body"), onField, { type: "textarea", className: "ui-field sm:col-span-2" })}
         </>
       );
     case "call":
@@ -183,11 +180,11 @@ function Fields({
           {field("Network name (SSID)", "ssid", v("ssid"), onField)}
           {field("Password", "password", v("password"), onField, { type: "password" })}
           <label className="block">
-            <span className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Security</span>
+            <span className="ui-label">Security</span>
             <select
               value={v("encryption") || "WPA"}
               onChange={(e) => onField("encryption", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+              className="ui-field"
             >
               <option value="WPA">WPA/WPA2/WPA3</option>
               <option value="WEP">WEP</option>
@@ -199,7 +196,7 @@ function Fields({
               type="checkbox"
               checked={v("hidden") === "true"}
               onChange={(e) => onField("hidden", e.target.checked ? "true" : "false")}
-              className="rounded accent-[var(--color-primary)]"
+              className="ui-checkbox"
             />
             Hidden network
           </label>
@@ -216,7 +213,7 @@ function Fields({
           {field("Email", "email", v("email"), onField, { type: "email" })}
           {field("Website", "url", v("url"), onField, { type: "url" })}
           {field("Address", "address", v("address"), onField)}
-          {field("Note", "note", v("note"), onField, { type: "textarea", className: "sm:col-span-2 w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none" })}
+          {field("Note", "note", v("note"), onField, { type: "textarea", className: "ui-field sm:col-span-2" })}
         </>
       );
     case "event":
@@ -225,24 +222,24 @@ function Fields({
           {field("Event title", "summary", v("summary"), onField)}
           {field("Location", "location", v("location"), onField)}
           <label className="block">
-            <span className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Start</span>
+            <span className="ui-label">Start</span>
             <input
               type="datetime-local"
               value={v("start")}
               onChange={(e) => onField("start", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+              className="ui-field"
             />
           </label>
           <label className="block">
-            <span className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">End</span>
+            <span className="ui-label">End</span>
             <input
               type="datetime-local"
               value={v("end")}
               onChange={(e) => onField("end", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
+              className="ui-field"
             />
           </label>
-          {field("Description", "description", v("description"), onField, { type: "textarea", className: "sm:col-span-2 w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none" })}
+          {field("Description", "description", v("description"), onField, { type: "textarea", className: "ui-field sm:col-span-2" })}
         </>
       );
     case "geo":
@@ -250,7 +247,7 @@ function Fields({
         <>
           {field("Latitude", "latitude", v("latitude"), onField, { type: "number", step: "any", placeholder: "-6.2088" })}
           {field("Longitude", "longitude", v("longitude"), onField, { type: "number", step: "any", placeholder: "106.8456" })}
-          {field("Place name (optional)", "query", v("query"), onField, { className: "sm:col-span-2 w-full px-3 py-2 rounded-lg bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] text-[var(--color-on-surface)] focus:ring-2 focus:ring-[var(--color-primary)] outline-none" })}
+          {field("Place name (optional)", "query", v("query"), onField, { className: "ui-field sm:col-span-2" })}
         </>
       );
     default:

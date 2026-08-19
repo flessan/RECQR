@@ -2,156 +2,205 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { QrCode, ScanLine, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight, ImageDown, QrCode, ScanLine, ShieldCheck, Sparkles, WifiOff } from "lucide-react";
+
+const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+const STATS = [
+  { value: "0", label: "bytes uploaded" },
+  { value: "14", label: "content presets" },
+  { value: "100%", label: "in your browser" },
+];
 
 export default function Hero() {
-  // Material You 3 Standard & Emphasized Easing
-  const m3Easing: [number, number, number, number] = [0.2, 0, 0, 1];
-
   return (
-    <section className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-[var(--color-background)] text-[var(--color-on-surface)] selection:bg-[var(--color-primary-container)]">
-
-      {/* Background Ambient Tonal Glows */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-[20%] -right-[10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-br from-[var(--color-primary-container)]/60 to-[var(--color-tertiary-container)]/40 blur-[120px]"
-        />
-        <motion.div
-          animate={{ scale: [1.05, 1, 1.05], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-tr from-[var(--color-primary)]/20 to-[var(--color-secondary-container)]/50 blur-[120px]"
-        />
-
-        {/* Subtle M3 Tonal Dot Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(var(--color-primary)_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.05]" />
+    <section className="relative overflow-hidden bg-[var(--color-background)] pt-28 pb-20 sm:pt-32 lg:pt-36">
+      {/* playful background: dot grid + color blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="ui-dotgrid absolute inset-0 opacity-60" />
+        <div className="absolute -right-24 -top-24 h-[26rem] w-[26rem] rounded-full bg-[var(--color-secondary-container)] opacity-70 blur-3xl" />
+        <div className="absolute -bottom-32 -left-24 h-[24rem] w-[24rem] rounded-full bg-[var(--color-primary-container)] opacity-70 blur-3xl" />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col items-center text-center pt-32">
-
-        {/* Top Badge (M3 Secondary Container) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: m3Easing }}
-        >
-          <Link
-            href="/documentation"
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-[var(--color-secondary-container)] hover:opacity-90 transition-opacity group mb-8 cursor-pointer select-none"
+      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10 lg:px-8">
+        {/* ---------------------------------------------------------- copy */}
+        <div className="min-w-0">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease }}
           >
-            <Sparkles className="w-4 h-4 text-[var(--color-primary)]" />
-            <span className="text-sm font-medium text-[var(--color-on-secondary-container)]">100% in-browser · No tracking · Open source</span>
-            <ArrowRight className="w-4 h-4 text-[var(--color-primary)] group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </motion.div>
+            <Link
+              href="/documentation"
+              className="ui-badge border-[var(--color-outline)] bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)] shadow-[var(--ui-shadow-sm)] transition-transform hover:-translate-y-0.5"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              No servers · No tracking · Open source
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </motion.div>
 
-        {/* Main Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: m3Easing }}
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-8 select-none"
-        >
-          <span className="block text-[var(--color-on-surface)]">Scan. Decode.</span>
-          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-tertiary)] to-[#00A0A0] pb-2">
-            Instantly.
-          </span>
-        </motion.h1>
-
-        {/* Subheadline */}
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: m3Easing }}
-          className="text-lg sm:text-xl lg:text-2xl text-[var(--color-on-surface-variant)] mb-12 max-w-2xl mx-auto font-normal leading-relaxed"
-        >
-          Scan and generate QR codes instantly — entirely in your browser. Your camera, images, and data never leave your device.
-        </motion.p>
-
-        {/* CTA Buttons (M3 Filled & Tonal) */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: m3Easing }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full sm:w-auto"
-        >
-          {/* Primary Filled Button */}
-          <Link
-            href="/scanner"
-            className="w-full sm:w-auto flex items-center justify-center space-x-3 px-8 py-4 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-full font-semibold text-lg hover:opacity-90 active:scale-95 transition-all md-elevation-1 select-none"
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.05, ease }}
+            className="ui-display mt-6 text-[clamp(2.75rem,8vw,5rem)] text-[var(--color-on-surface)]"
           >
-            <ScanLine className="w-5 h-5" />
-            <span>Open Scanner</span>
-          </Link>
+            Scan it.
+            <br />
+            Make it.{" "}
+            <span className="ui-underline whitespace-nowrap text-[var(--color-primary)]">Own it.</span>
+          </motion.h1>
 
-          {/* Secondary Tonal Button */}
-          <Link
-            href="/generator"
-            className="w-full sm:w-auto flex items-center justify-center space-x-3 px-8 py-4 bg-[var(--color-secondary-container)] text-[var(--color-on-secondary-container)] rounded-full font-semibold text-lg hover:opacity-90 active:scale-95 transition-all select-none"
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.12, ease }}
+            className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-[var(--color-on-surface-variant)] sm:text-xl"
           >
-            <QrCode className="w-5 h-5" />
-            <span>Create QR</span>
-          </Link>
-        </motion.div>
+            A QR scanner and generator that never phones home. Camera frames,
+            images and logos are processed on your device — and nowhere else.
+          </motion.p>
 
-        {/* Central App Mockup (M3 Surface Container) */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.18, ease }}
+            className="mt-8 flex flex-col gap-3 sm:flex-row"
+          >
+            <Link href="/scanner" className="ui-btn ui-btn-primary ui-btn-lg w-full sm:w-auto">
+              <ScanLine className="h-5 w-5" />
+              Open scanner
+            </Link>
+            <Link href="/generator" className="ui-btn ui-btn-surface ui-btn-lg w-full sm:w-auto">
+              <QrCode className="h-5 w-5" />
+              Create a QR
+            </Link>
+          </motion.div>
+
+          <motion.dl
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.24, ease }}
+            className="mt-10 flex flex-wrap gap-x-8 gap-y-4"
+          >
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <dt className="sr-only">{s.label}</dt>
+                <dd>
+                  <span className="block text-3xl font-black tracking-tight text-[var(--color-on-surface)]">
+                    {s.value}
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--color-on-surface-variant)]">
+                    {s.label}
+                  </span>
+                </dd>
+              </div>
+            ))}
+          </motion.dl>
+        </div>
+
+        {/* ------------------------------------------------------- artwork */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 40 }}
+          initial={{ opacity: 0, scale: 0.94, y: 24 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5, ease: m3Easing }}
-          className="relative mt-24 w-full max-w-3xl mx-auto select-none pointer-events-none"
+          transition={{ duration: 0.7, delay: 0.15, ease }}
+          className="relative mx-auto w-full max-w-md min-w-0"
         >
-          <div className="relative aspect-[16/10] sm:aspect-video rounded-t-3xl sm:rounded-3xl overflow-hidden bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] shadow-xl shadow-black/5 flex items-center justify-center">
-
-            {/* Inner Mockup Scanner Frame */}
-            <div className="relative w-48 h-48 sm:w-64 sm:h-64 flex items-center justify-center">
-              <div className="absolute inset-0 border-2 border-[var(--color-primary)]/20 rounded-3xl" />
-              <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[var(--color-primary)] rounded-tl-3xl" />
-              <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[var(--color-primary)] rounded-tr-3xl" />
-              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[var(--color-primary)] rounded-bl-3xl" />
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[var(--color-primary)] rounded-br-3xl" />
-
-              <QrCode className="w-24 h-24 text-[var(--color-primary)]/20" />
-
-              <motion.div
-                animate={{ y: [0, 180, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute left-0 right-0 top-4 h-[2px] bg-[var(--color-primary)] shadow-[0_0_15px_var(--color-primary)]"
-              />
+          <div className="ui-card ui-card-primary relative overflow-hidden rounded-[2.5rem] border-[var(--color-outline)] p-6 shadow-[var(--ui-shadow-lg)]">
+            <div className="flex items-center justify-between">
+              <span className="ui-badge border-[var(--color-outline)] bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface)]">
+                <span className="h-2 w-2 rounded-full bg-[var(--color-success)]" />
+                Live preview
+              </span>
+              <span className="text-xs font-black uppercase tracking-[0.08em] text-[var(--color-on-primary-container)]">
+                recqr
+              </span>
             </div>
 
-            {/* Floating Tonal Cards */}
-            <motion.div
-              animate={{ y: [-8, 8, -8] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-10 -left-10 sm:left-10 bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] p-4 rounded-2xl flex items-center space-x-3 shadow-lg shadow-black/5"
-            >
-              <div className="w-10 h-10 bg-[var(--color-secondary-container)] rounded-full flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-[var(--color-on-secondary-container)]" />
-              </div>
-              <div className="text-left hidden sm:block">
-                <p className="text-sm font-semibold text-[var(--color-on-surface)]">Smart Detection</p>
-                <p className="text-xs text-[var(--color-on-surface-variant)]">Auto-parses payload</p>
-              </div>
-            </motion.div>
+            <div className="mt-5 grid place-items-center rounded-3xl border-2 border-[var(--color-outline)] bg-[var(--color-surface-container-lowest)] p-6">
+              <HeroQr />
+            </div>
 
-            <motion.div
-              animate={{ y: [8, -8, 8] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute bottom-10 -right-10 sm:right-10 bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] p-4 rounded-2xl flex items-center space-x-3 shadow-lg shadow-black/5"
+            <p className="mt-5 text-center text-sm font-bold text-[var(--color-on-primary-container)]">
+              Rendered locally · SVG · PNG · WebP
+            </p>
+            <div className="h-1" />
+          </div>
+
+          {/* floating sticker cards */}
+          <div className="pointer-events-none absolute -left-4 top-1/3 hidden sm:block lg:-left-10">
+            <div
+              className="ui-card flex items-center gap-2 rounded-2xl border-[var(--color-outline)] px-3 py-2 shadow-[var(--ui-shadow-sm)]"
+              style={{ animation: "ui-float 6s ease-in-out infinite" }}
             >
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-semibold text-[var(--color-on-surface)]">Private</p>
-                <p className="text-xs text-[var(--color-on-surface-variant)]">No data uploaded</p>
-              </div>
-              <div className="w-10 h-10 bg-[var(--color-tertiary-container)] rounded-full flex items-center justify-center">
-                <ScanLine className="w-5 h-5 text-[var(--color-on-tertiary-container)]" />
-              </div>
-            </motion.div>
+              <ShieldCheck className="h-4 w-4 text-[var(--color-primary)]" />
+              <span className="text-xs font-bold text-[var(--color-on-surface)]">Safe-link checks</span>
+            </div>
+          </div>
+          <div className="pointer-events-none absolute -right-4 top-2/3 hidden sm:block lg:-right-10">
+            <div
+              className="ui-card flex items-center gap-2 rounded-2xl border-[var(--color-outline)] px-3 py-2 shadow-[var(--ui-shadow-sm)]"
+              style={{ animation: "ui-float 7s ease-in-out infinite", animationDelay: "1.2s" }}
+            >
+              <WifiOff className="h-4 w-4 text-[var(--color-secondary)]" />
+              <span className="text-xs font-bold text-[var(--color-on-surface)]">Works offline</span>
+            </div>
+          </div>
+          <div className="pointer-events-none absolute -bottom-6 left-6 hidden lg:block">
+            <div
+              className="ui-card flex items-center gap-2 rounded-2xl border-[var(--color-outline)] px-3 py-2 shadow-[var(--ui-shadow-sm)]"
+              style={{ animation: "ui-float 5.5s ease-in-out infinite", animationDelay: "0.6s" }}
+            >
+              <ImageDown className="h-4 w-4 text-[var(--color-tertiary)]" />
+              <span className="text-xs font-bold text-[var(--color-on-surface)]">Logo compositing</span>
+            </div>
           </div>
         </motion.div>
       </div>
     </section>
+  );
+}
+
+/** Decorative QR-ish mark drawn with plain divs (no encoder needed). */
+function HeroQr() {
+  const cells = [
+    "1111111001101111111",
+    "1000001010101000001",
+    "1011101001101011101",
+    "1011101110101011101",
+    "1011101010101011101",
+    "1000001011001000001",
+    "1111111010101111111",
+    "0000000011100000000",
+    "1101101101011010110",
+    "0010110010110101001",
+    "1101011101001011010",
+    "0100110010110100101",
+    "1111000101011011010",
+    "0000000110100101101",
+    "1111111011010110010",
+    "1000001001011001101",
+    "1011101110100110010",
+    "1011101010111001101",
+    "1111111011010110011",
+  ];
+  return (
+    <div
+      className="grid aspect-square w-full max-w-[15rem] gap-[2px]"
+      style={{ gridTemplateColumns: `repeat(${cells[0].length}, minmax(0, 1fr))` }}
+      aria-hidden="true"
+    >
+      {cells.flatMap((row, y) =>
+        row.split("").map((c, x) => (
+          <span
+            key={`${x}-${y}`}
+            className={`aspect-square rounded-[2px] ${
+              c === "1" ? "bg-[var(--color-on-surface)]" : "bg-transparent"
+            }`}
+          />
+        ))
+      )}
+    </div>
   );
 }

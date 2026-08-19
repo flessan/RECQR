@@ -38,14 +38,14 @@ export default function ScannerControls({
         {isScanning ? (
           <button
             onClick={scanner.stop}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-error)] text-[var(--color-on-error)] font-medium hover:opacity-90 transition-opacity"
+            className="ui-btn ui-btn-danger"
           >
             <CameraOff className="w-5 h-5" /> Stop
           </button>
         ) : (
           <button
             onClick={status === "success" ? scanner.resume : scanner.start}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-primary)] text-[var(--color-on-primary)] font-medium hover:opacity-90 transition-opacity"
+            className="ui-btn ui-btn-primary"
           >
             {status === "requesting" ? (
               <RefreshCw className="w-5 h-5 animate-spin" />
@@ -90,7 +90,7 @@ export default function ScannerControls({
       </div>
 
       {isScanning && zoom.supported && (
-        <div className="flex items-center gap-3 max-w-sm mx-auto">
+        <div className="ui-card-flat mx-auto flex max-w-sm items-center gap-3 px-4 py-2.5">
           <ZoomIn className="w-4 h-4 text-[var(--color-on-surface-variant)]" />
           <input
             type="range"
@@ -100,9 +100,9 @@ export default function ScannerControls({
             value={zoom.value}
             onChange={(e) => scanner.setZoom(parseFloat(e.target.value))}
             aria-label="Camera zoom"
-            className="w-full accent-[var(--color-primary)]"
+            className="w-full cursor-pointer accent-[var(--color-primary)]"
           />
-          <span className="text-xs text-[var(--color-on-surface-variant)] w-10 text-right tabular-nums">
+          <span className="w-10 text-right text-xs font-bold tabular-nums text-[var(--color-on-surface-variant)]">
             {zoom.value.toFixed(1)}x
           </span>
         </div>
@@ -128,11 +128,8 @@ function IconButton({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className={`p-2.5 rounded-full border transition-colors ${
-        active
-          ? "bg-[var(--color-primary-container)] border-[var(--color-primary)] text-[var(--color-on-primary-container)]"
-          : "bg-[var(--color-surface-container)] border-[var(--color-outline-variant)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)]"
-      }`}
+      aria-pressed={active}
+      className="ui-icon-btn"
     >
       {children}
     </button>

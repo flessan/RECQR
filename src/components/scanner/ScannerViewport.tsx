@@ -18,7 +18,7 @@ export default function ScannerViewport({
 }: Props) {
   const isVideoShown = status === "scanning" || status === "success";
   return (
-    <div className="relative w-full aspect-square max-w-md mx-auto rounded-3xl overflow-hidden bg-black md-elevation-2">
+    <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2rem] border-2 border-[var(--color-outline)] bg-black shadow-[var(--ui-shadow)]">
       <video
         ref={videoRef}
         playsInline
@@ -39,35 +39,35 @@ export default function ScannerViewport({
 
       {/* Status overlay */}
       {!isVideoShown && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 bg-[var(--color-surface-container)]/95 text-[var(--color-on-surface)]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[var(--color-surface-container)] px-6 text-center text-[var(--color-on-surface)]">
           {status === "requesting" && (
             <>
               <Loader2 className="w-8 h-8 animate-spin text-[var(--color-primary)] mb-3" />
-              <p className="font-medium">Requesting camera…</p>
+              <p className="font-black tracking-tight">Requesting camera…</p>
             </>
           )}
           {(status === "idle" || status === "stopped") && !error && (
             <>
-              <div className="w-16 h-16 rounded-full bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] flex items-center justify-center mb-3">
+              <div className="mb-4 grid h-20 w-20 place-items-center rounded-3xl border-2 border-[var(--color-outline)] bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] shadow-[var(--ui-shadow-sm)]">
                 <QrGlyph />
               </div>
-              <p className="font-medium">Camera is off</p>
-              <p className="text-sm text-[var(--color-on-surface-variant)] mt-1">
+              <p className="text-lg font-black tracking-tight">Camera is off</p>
+              <p className="mt-1 text-sm font-semibold text-[var(--color-on-surface-variant)]">
                 Press “Start scanning” to begin.
               </p>
             </>
           )}
           {error && (
-            <div className="text-[var(--color-on-error-container)]">
-              <p className="font-semibold">Camera unavailable</p>
-              <p className="text-sm mt-1 max-w-xs">{error}</p>
+            <div className="ui-card-flat max-w-xs border-[var(--color-error)] bg-[var(--color-error-container)] p-4 text-[var(--color-on-error-container)]">
+              <p className="font-black tracking-tight">Camera unavailable</p>
+              <p className="mt-1 text-sm font-medium">{error}</p>
             </div>
           )}
         </div>
       )}
 
       {status === "success" && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-green-600 text-white text-sm font-medium shadow-lg">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border-2 border-[var(--color-outline)] bg-[var(--color-success)] px-4 py-2 text-sm font-black text-white shadow-[var(--ui-shadow-sm)]">
           QR code detected
         </div>
       )}
@@ -77,7 +77,7 @@ export default function ScannerViewport({
 
 function Reticle({ active, success }: { active: boolean; success: boolean }) {
   const color = success ? "#22c55e" : active ? "var(--color-primary)" : "var(--color-outline)";
-  const corner = "absolute w-8 h-8 border-[3px] rounded-md";
+  const corner = "absolute w-10 h-10 border-4 rounded-xl";
   return (
     <>
       <span className={`${corner} top-0 left-0 border-r-0 border-b-0`} style={{ borderColor: color }} />

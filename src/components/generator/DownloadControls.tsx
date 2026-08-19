@@ -81,25 +81,21 @@ export default function DownloadControls({
 
   return (
     <section className="space-y-4" aria-labelledby="download-heading">
-      <h2 id="download-heading" className="text-lg font-bold text-[var(--color-on-surface)] flex items-center gap-2">
-        <span className="bg-[var(--color-primary)] text-[var(--color-on-primary)] w-6 h-6 rounded-full inline-flex items-center justify-center text-sm">4</span>
+      <h2 id="download-heading" className="flex items-center gap-3 text-xl font-black tracking-tight text-[var(--color-on-surface)]">
+        <span className="ui-step">4</span>
         Download
       </h2>
 
       <div>
-        <span className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-1">Format</span>
-        <div className="flex gap-1">
+        <span className="ui-label">Format</span>
+        <div className="ui-segment">
           {(["png", "svg", "webp"] as const).map((f) => (
             <button
               key={f}
               type="button"
               onClick={() => onOutput({ format: f })}
               disabled={f === "webp" && design.transparentBg}
-              className={`flex-1 py-1.5 rounded-lg text-sm font-medium border transition-colors uppercase ${
-                output.format === f
-                  ? "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] border-[var(--color-primary)]"
-                  : "bg-[var(--color-surface-container)] border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)]"
-              } disabled:opacity-40 disabled:cursor-not-allowed`}
+              className={`ui-chip uppercase ${output.format === f ? "is-active" : ""}`}
               title={f === "webp" && design.transparentBg ? "WebP export uses the configured background" : undefined}
             >
               {f}
@@ -117,7 +113,7 @@ export default function DownloadControls({
         type="button"
         onClick={handleDownload}
         disabled={!bitmap || busy}
-        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[var(--color-primary)] text-[var(--color-on-primary)] font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+        className="ui-btn ui-btn-primary ui-btn-lg w-full"
       >
         {busy ? (
           <ImageDown className="w-5 h-5 animate-pulse" />

@@ -102,35 +102,35 @@ export default function ImageScanner({ onDecoded }: Props) {
         if (dragDepth.current <= 0) setDragging(false);
       }}
       onDrop={onDrop}
-      className={`relative rounded-2xl border-2 border-dashed p-5 text-center transition-colors ${
+      className={`relative rounded-3xl border-2 border-dashed p-6 text-center transition-colors ${
         dragging
           ? "border-[var(--color-primary)] bg-[var(--color-primary-container)]"
-          : "border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)]"
+          : "border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] hover:border-[var(--color-primary)]"
       }`}
     >
       {dragging && (
-        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-[var(--color-primary-container)]/90 text-[var(--color-on-primary-container)] font-semibold z-10">
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-[var(--color-primary-container)]/95 text-lg font-black tracking-tight text-[var(--color-on-primary-container)]">
           Drop image to scan
         </div>
       )}
 
       <div className="flex flex-col items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] flex items-center justify-center">
+        <div className="grid h-12 w-12 place-items-center rounded-2xl border-2 border-[var(--color-outline)] bg-[var(--color-secondary-container)] text-[var(--color-on-secondary-container)] shadow-[var(--ui-shadow-sm)]">
           <ImagePlus className="w-6 h-6" />
         </div>
         <div>
-          <p className="font-medium text-[var(--color-on-surface)]">
+          <p className="text-base font-black tracking-tight text-[var(--color-on-surface)]">
             Upload, drag &amp; drop, or paste a QR image
           </p>
-          <p className="text-sm text-[var(--color-on-surface-variant)] mt-0.5">
-            Press <kbd className="px-1.5 py-0.5 rounded bg-[var(--color-surface-container-high)] text-xs">Ctrl/⌘ + V</kbd> after copying a screenshot. 100% local.
+          <p className="mt-1 text-sm font-medium text-[var(--color-on-surface-variant)]">
+            Press <kbd className="rounded-md border-2 border-[var(--color-outline-variant)] bg-[var(--color-surface-container-high)] px-1.5 py-0.5 text-xs font-bold">Ctrl/⌘ + V</kbd> after copying a screenshot. 100% local.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-medium hover:opacity-90 transition-opacity"
+            className="ui-btn ui-btn-primary ui-btn-sm"
           >
             <Upload className="w-4 h-4" /> Choose image
           </button>
@@ -156,7 +156,7 @@ export default function ImageScanner({ onDecoded }: Props) {
                 });
               }
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--color-outline-variant)] text-sm font-medium hover:bg-[var(--color-surface-container-high)] transition-colors"
+            className="ui-btn ui-btn-surface ui-btn-sm"
           >
             <ClipboardPaste className="w-4 h-4" /> Paste
           </button>

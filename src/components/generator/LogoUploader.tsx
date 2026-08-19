@@ -26,8 +26,8 @@ export default function LogoUploader({ logo, onChange, onReset }: Props) {
 
   return (
     <section className="space-y-4" aria-labelledby="logo-heading">
-      <h2 id="logo-heading" className="text-lg font-bold text-[var(--color-on-surface)] flex items-center gap-2">
-        <span className="bg-[var(--color-primary)] text-[var(--color-on-primary)] w-6 h-6 rounded-full inline-flex items-center justify-center text-sm">3</span>
+      <h2 id="logo-heading" className="flex items-center gap-3 text-xl font-black tracking-tight text-[var(--color-on-surface)]">
+        <span className="ui-step">3</span>
         Logo / image
       </h2>
 
@@ -35,16 +35,16 @@ export default function LogoUploader({ logo, onChange, onReset }: Props) {
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full rounded-2xl border-2 border-dashed border-[var(--color-outline-variant)] p-6 flex flex-col items-center gap-2 hover:bg-[var(--color-surface-container-low)] transition-colors"
+          className="flex w-full flex-col items-center gap-2 rounded-3xl border-2 border-dashed border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] p-7 transition-colors hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-container)]/40"
         >
-          <ImagePlus className="w-7 h-7 text-[var(--color-primary)]" />
-          <span className="text-sm font-medium text-[var(--color-on-surface)]">Upload a logo</span>
-          <span className="text-xs text-[var(--color-on-surface-variant)]">PNG, JPG, SVG or WebP — processed locally</span>
+          <span className="grid h-12 w-12 place-items-center rounded-2xl border-2 border-[var(--color-outline)] bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)] shadow-[var(--ui-shadow-sm)]"><ImagePlus className="h-6 w-6" /></span>
+          <span className="text-base font-black tracking-tight text-[var(--color-on-surface)]">Upload a logo</span>
+          <span className="text-xs font-semibold text-[var(--color-on-surface-variant)]">PNG, JPG, SVG or WebP — processed locally</span>
         </button>
       ) : (
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-surface-container)] border border-[var(--color-outline-variant)]">
+        <div className="ui-card-flat flex items-center gap-3 p-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logo.src} alt="Logo preview" className="w-14 h-14 object-contain rounded-lg bg-white" />
+          <img src={logo.src} alt="Logo preview" className="h-14 w-14 flex-none rounded-xl border-2 border-[var(--color-outline-variant)] bg-white object-contain" />
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium text-[var(--color-on-surface)] truncate">{logo.name}</div>
             <div className="text-xs text-[var(--color-on-surface-variant)]">Error correction forced to H</div>
@@ -53,7 +53,7 @@ export default function LogoUploader({ logo, onChange, onReset }: Props) {
             type="button"
             onClick={onReset}
             aria-label="Remove logo"
-            className="p-2 rounded-full text-[var(--color-on-surface-variant)] hover:text-[var(--color-error)] hover:bg-[var(--color-error-container)] transition-colors"
+            className="ui-icon-btn h-10 w-10 hover:border-[var(--color-error)] hover:bg-[var(--color-error-container)] hover:text-[var(--color-error)]"
           >
             <Trash2 className="w-5 h-5" />
           </button>
@@ -83,7 +83,7 @@ export default function LogoUploader({ logo, onChange, onReset }: Props) {
             onChange={(v) => onChange({ sizeRatio: v / 100 })}
           />
           {logo.sizeRatio > 0.25 && (
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-yellow-100 text-yellow-900 dark:bg-yellow-900/30 dark:text-yellow-100 text-xs">
+            <div className="ui-card-flat ui-card-tertiary flex items-start gap-2 p-3 text-xs font-semibold">
               <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
               Large logos can make the code hard to scan. Test it with a real phone, and keep the quiet zone clear.
             </div>
@@ -102,7 +102,7 @@ export default function LogoUploader({ logo, onChange, onReset }: Props) {
                 type="checkbox"
                 checked={logo.roundedBg}
                 onChange={(e) => onChange({ roundedBg: e.target.checked })}
-                className="rounded accent-[var(--color-primary)]"
+                className="ui-checkbox"
               />
               Rounded background
             </label>
@@ -112,12 +112,12 @@ export default function LogoUploader({ logo, onChange, onReset }: Props) {
                 type="color"
                 value={logo.background}
                 onChange={(e) => onChange({ background: e.target.value })}
-                className="w-9 h-9 rounded-lg border border-[var(--color-outline-variant)] cursor-pointer bg-transparent p-0.5"
+                className="h-10 w-10 flex-none cursor-pointer rounded-xl border-2 border-[var(--color-outline-variant)] bg-transparent p-1"
               />
               <button
                 type="button"
                 onClick={() => onChange({ background: "transparent" })}
-                className="text-xs text-[var(--color-primary)] hover:underline"
+                className="ui-chip ui-btn-sm px-3 py-1 text-xs"
               >
                 None
               </button>
@@ -138,8 +138,8 @@ function RangeField({ label, value, min, max, step, suffix, onChange }: { label:
   return (
     <label className="block">
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs font-medium text-[var(--color-on-surface-variant)]">{label}</span>
-        <span className="text-xs text-[var(--color-on-surface)] tabular-nums">{value}{suffix}</span>
+        <span className="ui-label mb-0">{label}</span>
+        <span className="ui-badge px-2 py-0.5 text-xs tabular-nums">{value}{suffix}</span>
       </div>
       <input
         type="range"
@@ -148,7 +148,7 @@ function RangeField({ label, value, min, max, step, suffix, onChange }: { label:
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full accent-[var(--color-primary)]"
+        className="w-full accent-[var(--color-primary)] cursor-pointer"
       />
     </label>
   );

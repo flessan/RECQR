@@ -16,7 +16,7 @@ import type {
 } from "@/lib/qr/types";
 
 export const DEFAULT_DESIGN: GeneratorDesign = {
-  fgColor: "#1C1B1F",
+  fgColor: "#0E1330",
   bgColor: "#FFFFFF",
   transparentBg: false,
   size: 320,
