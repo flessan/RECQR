@@ -38,7 +38,7 @@ const reasons = [
       </svg>
     ),
     title: "Developer Experience",
-    description: "Clean APIs, comprehensive docs, and official SDKs.",
+    description: "Clean, modular TypeScript APIs and comprehensive docs.",
   },
   {
     icon: (
@@ -55,8 +55,8 @@ const reasons = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     ),
-    title: "Extensibility",
-    description: "Plugin system and webhooks for custom integrations.",
+    title: "Customizable",
+    description: "Design controls, logos, and multiple export formats.",
   },
   {
     icon: (

@@ -4,21 +4,14 @@ import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 import { motion } from "framer-motion";
 
-const codeExample = `// REST API Example - Hosted on Cloudflare Workers
-// 1. Generate QR Code (Returns SVG image directly)
-curl -X GET "https://qr-api.your-worker-subdomain.workers.dev/v1/qr/generate?text=https://example.com"
+const codeExample = `# Generate an SVG QR code (optional server endpoint)
+curl "https://your-worker.workers.dev/v1/qr/generate?text=https://example.com"
 
-// Or get JSON response
-curl -X GET "https://qr-api.your-worker-subdomain.workers.dev/v1/qr/generate?text=https://example.com&format=json"
+# With colors and margin
+curl "https://your-worker.workers.dev/v1/qr/generate?text=Hello&fg=%236750A4&bg=%23FFFFFF&margin=2"
 
-// JSON Response
-{
-  "success": true,
-  "data": {
-    "text": "https://example.com",
-    "svg": "<svg>...</svg>"
-  }
-}`;
+# JSON response (returns the SVG as a string)
+curl "https://your-worker.workers.dev/v1/qr/generate?text=Hello&format=json"`;
 
 export default function ApiPage() {
   return (
@@ -26,97 +19,72 @@ export default function ApiPage() {
       <Navigation />
 
       <div className="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <h1 className="text-5xl sm:text-6xl font-bold text-[var(--color-on-surface)] mb-6">
-              API Documentation
+            <h1 className="text-4xl sm:text-5xl font-bold text-[var(--color-on-surface)] mb-4">
+              Optional Edge API
             </h1>
-            <p className="text-xl text-[var(--color-on-surface-variant)] max-w-2xl mx-auto">
-              Integrate RECQR into your applications with our blazing-fast REST API, proudly powered by Cloudflare Workers.
+            <p className="text-lg text-[var(--color-on-surface-variant)] max-w-2xl mx-auto">
+              The RECQR web app needs <strong>no backend</strong> — scanning,
+              image decoding, and QR generation all run in the browser. The
+              Cloudflare Worker in <code>worker/</code> is an optional,
+              standalone endpoint for generating QR SVGs over HTTP.
             </p>
           </motion.div>
 
-          {/* API Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
             {[
-              {
-                title: "Cloudflare Workers",
-                description: "Global edge network ensures sub-50ms latency anywhere in the world.",
-              },
-              {
-                title: "No Auth Required",
-                description: "Get started immediately. Zero configuration or API keys needed.",
-              },
-              {
-                title: "High Availability",
-                description: "Built on serverless architecture for unparalleled uptime and scale.",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="md-card p-6"
-              >
-                <h3 className="text-xl font-semibold text-[var(--color-on-surface)] mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-[var(--color-on-surface-variant)]">
-                  {feature.description}
-                </p>
-              </motion.div>
+              { title: "SVG output", body: "Returns a crisp SVG or a JSON wrapper." },
+              { title: "No auth required", body: "Self-host the Worker; call it directly." },
+              { title: "Serverless", body: "Runs on Cloudflare's global edge network." },
+            ].map((f) => (
+              <div key={f.title} className="md-card p-5">
+                <h3 className="font-semibold text-[var(--color-on-surface)] mb-1">{f.title}</h3>
+                <p className="text-sm text-[var(--color-on-surface-variant)]">{f.body}</p>
+              </div>
             ))}
           </div>
 
-          {/* Code Example */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="md-card overflow-hidden"
-          >
+          <div className="md-card overflow-hidden">
             <div className="bg-[var(--color-surface-container)] px-6 py-4 border-b border-[var(--color-outline-variant)]">
               <h2 className="text-lg font-semibold text-[var(--color-on-surface)]">
-                Quick Start
+                GET /v1/qr/generate
               </h2>
             </div>
-            <div className="p-6">
-              <pre className="bg-[var(--color-surface-container-low)] rounded-[var(--radius-md)] p-6 overflow-x-auto">
-                <code className="text-sm text-[var(--color-on-surface-variant)] font-mono">
-                  {codeExample}
-                </code>
-              </pre>
+            <div className="p-6 space-y-4">
+              <div>
+                <h3 className="text-sm font-semibold text-[var(--color-on-surface)] mb-2">Query parameters</h3>
+                <ul className="text-sm text-[var(--color-on-surface-variant)] space-y-1">
+                  <li><code className="text-[var(--color-primary)]">text</code> — content to encode (required)</li>
+                  <li><code className="text-[var(--color-primary)]">margin</code> — quiet-zone modules (default 2)</li>
+                  <li><code className="text-[var(--color-primary)]">fg</code> — foreground color (default #000000)</li>
+                  <li><code className="text-[var(--color-primary)]">bg</code> — background color (default #ffffff)</li>
+                  <li><code className="text-[var(--color-primary)]">format</code> — <code>svg</code> (default) or <code>json</code></li>
+                </ul>
+              </div>
+              <div className="bg-[var(--color-surface-container-low)] rounded-xl overflow-hidden">
+                <div className="flex px-4 py-2 border-b border-[var(--color-outline-variant)]">
+                  <span className="text-xs text-[var(--color-on-surface-variant)] font-mono">Terminal</span>
+                </div>
+                <pre className="p-4 overflow-x-auto text-sm text-[var(--color-on-surface-variant)] font-mono">
+                  <code>{codeExample}</code>
+                </pre>
+              </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* SDK Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mt-12 text-center"
-          >
-            <h2 className="text-2xl font-bold text-[var(--color-on-surface)] mb-6">
-              Official SDKs
-            </h2>
-            <div className="flex flex-wrap justify-center gap-4">
-              {["JavaScript", "React", "Flutter", "Node.js", "Python", "Go"].map(
-                (sdk) => (
-                  <span
-                    key={sdk}
-                    className="px-6 py-3 rounded-full bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] font-medium"
-                  >
-                    {sdk}
-                  </span>
-                )
-              )}
-            </div>
-          </motion.div>
+          <div className="mt-8 p-5 rounded-2xl bg-[var(--color-surface-container)] border border-[var(--color-outline-variant)] text-sm text-[var(--color-on-surface-variant)]">
+            <strong className="text-[var(--color-on-surface)]">Note:</strong> There
+            is no server-side QR <em>decoding</em> endpoint. Decoding camera
+            frames and uploaded images always happens locally with jsQR — by
+            design, because sending those to a server would violate RECQR&apos;s
+            privacy model. Official SDKs, dynamic QR codes, analytics, and
+            webhooks are not implemented.
+          </div>
         </div>
       </div>
 

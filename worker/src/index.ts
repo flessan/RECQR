@@ -52,37 +52,16 @@ app.get('/v1/qr/generate', (c) => {
     c.header('Cache-Control', 'public, max-age=31536000, immutable');
     return c.body(svg);
 
-  } catch (error: any) {
-    return c.json({ success: false, error: error.message || 'Failed to generate QR code' }, 500);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to generate QR code';
+    return c.json({ success: false, error: message }, 500);
   }
 });
 
-// 2. Mock Decode Endpoint (Note: actual image decoding in a Worker is complex, 
-// so we provide a mock API to simulate the behavior for developers testing our API)
-app.post('/v1/qr/decode', async (c) => {
-  try {
-    const body = await c.req.json();
-    const { image } = body;
-
-    if (!image) {
-      return c.json({ success: false, error: 'Missing required field: image' }, 400);
-    }
-
-    // Since decoding an image inside a lightweight worker usually requires WASM
-    // or heavier JS libraries, we return a mock response for API demonstration purposes.
-    return c.json({
-      success: true,
-      data: {
-        text: 'https://example.com/mock-decoded',
-        type: 'url',
-        timestamp: new Date().toISOString()
-      },
-      message: 'Note: This is a mock response from the Cloudflare Worker.'
-    });
-
-  } catch (error) {
-    return c.json({ success: false, error: 'Invalid JSON payload' }, 400);
-  }
-});
+// NOTE: Image/QR decoding is intentionally NOT implemented in this Worker.
+// All decoding in RECQR happens client-side with jsQR. A server-side decode
+// endpoint would require a WASM decoder and would contradict the project's
+// privacy model (camera frames/images must never leave the browser). This is
+// deliberately omitted rather than returning misleading mock data.
 
 export default app;

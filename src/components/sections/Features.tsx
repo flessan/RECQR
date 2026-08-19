@@ -18,8 +18,8 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
       </svg>
     ),
-    title: "Smart Redirect",
-    description: "Automatically redirect to URLs when browser security permits, minimizing friction.",
+    title: "Real-Time Scanning",
+    description: "Throttled, battery-friendly camera decoding with torch, zoom, and front/rear switching.",
   },
   {
     icon: (
@@ -63,17 +63,17 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
       </svg>
     ),
-    title: "Dynamic QR",
-    description: "Create QR codes that can be updated without regenerating the image.",
+    title: "Image & Paste Scanning",
+    description: "Decode QR codes from uploads, drag & drop, or Ctrl/⌘+V — all processed locally.",
   },
   {
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
       </svg>
     ),
-    title: "Analytics",
-    description: "Track scan counts, locations, devices, and user engagement.",
+    title: "Custom Design",
+    description: "Colors, shapes, frames, error correction, and embedded logos — export PNG, SVG, or WebP.",
   },
   {
     icon: (
@@ -81,8 +81,8 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
       </svg>
     ),
-    title: "REST API",
-    description: "Full-featured REST API for integration with your applications.",
+    title: "Offline-Ready",
+    description: "A static, self-contained web app. Host it on GitHub Pages or anywhere — no backend required.",
   },
   {
     icon: (
@@ -90,8 +90,8 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
       </svg>
     ),
-    title: "SDK Support",
-    description: "Official SDKs for JavaScript, React, Flutter, Node.js, and more.",
+    title: "Rich QR Formats",
+    description: "URLs, Wi-Fi, vCards, events, geo, email, SMS, WhatsApp, and plain text.",
   },
   {
     icon: (
@@ -128,7 +128,7 @@ export default function Features() {
             Powerful Features
           </h2>
           <p className="text-xl text-[var(--color-on-surface-variant)] max-w-2xl mx-auto">
-            Everything you need for modern QR code management, from scanning to analytics.
+            Everything runs locally in your browser — from real-time scanning to custom QR generation.
           </p>
         </motion.div>
 

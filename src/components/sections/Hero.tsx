@@ -41,7 +41,7 @@ export default function Hero() {
             className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-[#E8DEF8] hover:bg-[#DCC9F5] transition-colors group mb-8 cursor-pointer select-none"
           >
             <Sparkles className="w-4 h-4 text-[#6750A4]" />
-            <span className="text-sm font-medium text-[#49454F]">Powered by Cloudflare Workers</span>
+            <span className="text-sm font-medium text-[#49454F]">100% in-browser · No tracking · Open source</span>
             <ArrowRight className="w-4 h-4 text-[#6750A4] group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
@@ -66,7 +66,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2, ease: m3Easing }}
           className="text-lg sm:text-xl lg:text-2xl text-[#49454F] mb-12 max-w-2xl mx-auto font-normal leading-relaxed"
         >
-          The ultimate edge-powered QR platform. Native app performance, zero installations. Built for modern browsers.
+          Scan and generate QR codes instantly — entirely in your browser. Your camera, images, and data never leave your device.
         </motion.p>
 
         {/* CTA Buttons (M3 Filled & Tonal) */}
@@ -142,8 +142,8 @@ export default function Hero() {
               className="absolute bottom-10 -right-10 sm:right-10 bg-white border border-[#E6E0E9] p-4 rounded-2xl flex items-center space-x-3 shadow-lg shadow-[#6750A4]/5"
             >
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-semibold text-[#1D1B20]">Edge Powered</p>
-                <p className="text-xs text-[#49454F]">&lt; 50ms latency</p>
+                <p className="text-sm font-semibold text-[#1D1B20]">Private</p>
+                <p className="text-xs text-[#49454F]">No data uploaded</p>
               </div>
               <div className="w-10 h-10 bg-[#FFD8E4] rounded-full flex items-center justify-center">
                 <ScanLine className="w-5 h-5 text-[#7D5260]" />

@@ -17,28 +17,28 @@ const sidebarLinks = [
     ]
   },
   {
-    title: "Getting Started",
+    title: "Using RECQR",
     icon: <Play className="w-4 h-4" />,
     items: [
       { name: "Quick Start", id: "quickstart" },
-      { name: "Using the Scanner", id: "scanner" },
-      { name: "Generating Codes", id: "generator" },
+      { name: "Scanner", id: "scanner" },
+      { name: "Generator", id: "generator" },
+      { name: "Privacy & Security", id: "privacy" },
     ]
   },
   {
-    title: "Edge API",
+    title: "Reference",
     icon: <Terminal className="w-4 h-4" />,
     items: [
-      { name: "API Reference", id: "api-reference" },
-      { name: "Cloudflare Workers", id: "workers" },
+      { name: "Supported Formats", id: "formats" },
+      { name: "Optional Edge API", id: "api-reference" },
     ]
   },
   {
-    title: "Integration",
+    title: "Open Source",
     icon: <Blocks className="w-4 h-4" />,
     items: [
-      { name: "React SDK", id: "react" },
-      { name: "Webhooks", id: "webhooks" },
+      { name: "Self-Hosting", id: "self-hosting" },
     ]
   }
 ];
@@ -137,9 +137,10 @@ export default function DocumentationPage() {
                   <strong> RECQR flips this paradigm</strong>.
                 </p>
                 <ul>
-                  <li><strong>100% Client-Side Scanning:</strong> We use WASM and modern browser APIs to decode QR codes directly on your device. Your camera feed never touches our servers.</li>
-                  <li><strong>Rich Payloads:</strong> Automatically identifies WiFi, vCards, Calendar Events, Geo-locations, and Maps them to beautiful, actionable UI cards.</li>
-                  <li><strong>Edge API:</strong> Our generator API is hosted on Cloudflare Workers, meaning the generation happens on an edge node just milliseconds away from your users.</li>
+                  <li><strong>100% Client-Side:</strong> QR scanning, image decoding, and generation all run in your browser with jsQR and the Canvas API. Your camera feed and images never touch a server.</li>
+                  <li><strong>Rich Payloads:</strong> Automatically identifies URLs, Wi-Fi, vCards, calendar events, geo coordinates, email, SMS, and WhatsApp links.</li>
+                  <li><strong>Private by Design:</strong> Scan history is stored in localStorage on your device only. There are no accounts, cookies, or analytics.</li>
+                  <li><strong>Optional Edge API:</strong> A small Cloudflare Worker can generate QR SVGs over HTTP if you need server-side rendering — it is never required by the web app.</li>
                 </ul>
               </div>
             </section>
@@ -151,7 +152,7 @@ export default function DocumentationPage() {
                 Quick Start
               </h2>
               <p className="text-[var(--color-on-surface-variant)] mb-4">
-                Want to host RECQR yourself? It's a statically exported Next.js 14 application that can be deployed to GitHub Pages, Vercel, or Netlify instantly.
+                RECQR is a statically exported Next.js (App Router) application. It deploys to GitHub Pages, Vercel, Netlify, or any static host.
               </p>
               <div className="bg-[#111111] rounded-xl border border-white/10 overflow-hidden mb-6 shadow-xl">
                 <div className="flex px-4 py-2 border-b border-white/10 bg-[#1A1A1A]">
@@ -168,6 +169,66 @@ npm run dev</code>
               </div>
             </section>
 
+            {/* Scanner */}
+            <section id="scanner" className="scroll-mt-32">
+              <h2 className="text-3xl font-bold text-[var(--color-on-surface)] mb-4 flex items-center">
+                <Hash className="w-6 h-6 mr-2 text-[var(--color-primary)]" /> Scanner
+              </h2>
+              <ul className="list-disc pl-6 space-y-2 text-[var(--color-on-surface-variant)]">
+                <li><strong>Camera:</strong> real-time scanning with throttled decoding (~12 frames/sec), front/rear switching, torch and zoom where supported.</li>
+                <li><strong>Image:</strong> upload, drag &amp; drop, or Ctrl/⌘+V to paste a screenshot. All images are processed locally.</li>
+                <li><strong>Results:</strong> URLs are never opened automatically; the hostname is shown first, with warnings for suspicious links.</li>
+                <li><strong>History:</strong> scans are saved in localStorage on this device only, with favorites and per-item delete.</li>
+              </ul>
+            </section>
+
+            {/* Generator */}
+            <section id="generator" className="scroll-mt-32">
+              <h2 className="text-3xl font-bold text-[var(--color-on-surface)] mb-4 flex items-center">
+                <Hash className="w-6 h-6 mr-2 text-[var(--color-primary)]" /> Generator
+              </h2>
+              <p className="text-[var(--color-on-surface-variant)] mb-3">
+                Build a QR code in four steps: choose a content preset, customize the design, optionally add a logo, then download.
+              </p>
+              <ul className="list-disc pl-6 space-y-2 text-[var(--color-on-surface-variant)]">
+                <li>Presets for links, text, email, call, SMS, WhatsApp, Wi-Fi, vCard, events, geo, social/app/image/video links.</li>
+                <li>Colors, size, quiet zone, error correction, dot/eye styles, and an optional label frame.</li>
+                <li>Local-only logo embedding with automatic error-correction level H and size warnings.</li>
+                <li>Export PNG, SVG, or WebP. Filenames use the <code>recqr-qr</code> prefix.</li>
+              </ul>
+            </section>
+
+            {/* Privacy */}
+            <section id="privacy" className="scroll-mt-32">
+              <h2 className="text-3xl font-bold text-[var(--color-on-surface)] mb-4 flex items-center">
+                <Hash className="w-6 h-6 mr-2 text-[var(--color-primary)]" /> Privacy &amp; Security
+              </h2>
+              <ul className="list-disc pl-6 space-y-2 text-[var(--color-on-surface-variant)]">
+                <li>Camera frames and uploaded/pasted images never leave the browser.</li>
+                <li>Dangerous protocols (javascript:, data:, file:, vbscript:) are blocked from &quot;open&quot; actions.</li>
+                <li>Decoded content is rendered as text — never injected as HTML.</li>
+                <li>No third-party analytics, trackers, or network calls in the client app.</li>
+              </ul>
+            </section>
+
+            {/* Formats */}
+            <section id="formats" className="scroll-mt-32">
+              <h2 className="text-3xl font-bold text-[var(--color-on-surface)] mb-4 flex items-center">
+                <Hash className="w-6 h-6 mr-2 text-[var(--color-primary)]" /> Supported Formats
+              </h2>
+              <p className="text-[var(--color-on-surface-variant)] mb-2">URL, plain text, email (mailto), telephone (tel), SMS, WhatsApp (wa.me / whatsapp://), Wi-Fi, vCard 3.0, iCalendar events, and geo coordinates.</p>
+            </section>
+
+            {/* Self-hosting */}
+            <section id="self-hosting" className="scroll-mt-32">
+              <h2 className="text-3xl font-bold text-[var(--color-on-surface)] mb-4 flex items-center">
+                <Hash className="w-6 h-6 mr-2 text-[var(--color-primary)]" /> Self-Hosting
+              </h2>
+              <p className="text-[var(--color-on-surface-variant)] mb-3">
+                <code>npm install &amp;&amp; npm run build</code> produces a static export in <code>out/</code>. Deploy that folder to any static host. For GitHub Pages, set <code>NEXT_PUBLIC_REPO_NAME</code> to the repository name.
+              </p>
+            </section>
+
             {/* API Reference */}
             <section id="api-reference" className="scroll-mt-32">
               <h2 className="text-3xl font-bold text-[var(--color-on-surface)] mb-6 flex items-center">
@@ -175,7 +236,7 @@ npm run dev</code>
                 API Reference
               </h2>
               <p className="text-[var(--color-on-surface-variant)] mb-4">
-                Our Cloudflare Workers API allows you to programmatically generate QR codes on the edge. No authentication is required for basic usage.
+                The optional Cloudflare Worker exposes a single endpoint to generate QR codes as SVG over HTTP. The web app itself does not use it — generation happens in the browser. There is no server-side decoding.
               </p>
               
               <div className="mb-8">

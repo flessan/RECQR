@@ -137,6 +137,7 @@ export default function DonatePage() {
                 { name: "Open Collective", description: "Transparent funding", href: "https://opencollective.com/thio-saputra" },
               ].map((method) => (
                 <a
+                  key={method.name}
                   href={method.href}
                   target="_blank"
                   rel="noopener noreferrer"

@@ -1,127 +1,130 @@
 # RECQR
 
-A modern, open-source QR code platform built with Next.js 14+, Material Design 3, and TypeScript. Hosted on GitHub Pages.
+A modern, open-source **QR scanner and generator** that runs entirely in your
+browser. Built with Next.js (App Router, static export), TypeScript, Tailwind
+CSS v4, and a Material Design 3 theme. Hosted on GitHub Pages.
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/rocket.svg" width="24" height="24" align="top" /> Features
+> **Privacy-first.** Camera frames, uploaded images, and generated QR codes
+> never leave your device. There are no accounts, trackers, analytics, or
+> required backend services.
 
-### For Users
-- **Instant QR Scanning** - Real-time camera scanning with jsQR
-- **QR Code Generation** - Create custom QR codes with ease
-- **Smart Actions** - Automatic detection and execution of QR code actions
-- **Multiple Input Methods** - Camera, file upload, drag-and-drop
-- **Scan History** - Keep track of all your scans
-- **Favorites** - Save important QR codes
-- **Safe Scanning** - Security checks and warnings
+## Features
 
-### For Developers
-- **Cloudflare Workers API** - Ultra-fast edge API for integration
-- **SDK Libraries** - JavaScript, React, Flutter, Node.js
-- **Dynamic QR Codes** - Create and manage dynamic QR codes
-- **Analytics** - Track scans, locations, devices
-- **Webhooks** - Real-time notifications
-- **Documentation** - Comprehensive guides and references
+### Scanner
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/palette.svg" width="24" height="24" align="top" /> Design
+- **Real-time camera scanning** with throttled, low-CPU decoding (preview and
+  decode loop are separate; frames are downscaled).
+- **Rear/front camera switching**, plus **torch** and **zoom** when the device
+  supports them.
+- **Proper camera lifecycle** — streams are stopped on success, unmount, tab
+  hidden, and device removal.
+- **Sound and haptic feedback** (progressive enhancement).
+- **Image scanning** via file upload, **drag & drop**, and **Ctrl/⌘+V paste**
+  — all through one local decode pipeline with multi-scale/crop/contrast
+  preprocessing.
+- **Duplicate detection** and a manual **scan again** action.
+- **Clear error states** for denied permission, no camera, and busy camera.
 
-Built with **Material Design 3** (Material You):
-- Responsive design
-- Beautiful animations
-- Dynamic colors
-- Dark mode / Light mode
-- Rounded corners
-- Soft elevation
-- Clean typography
+### Smart results
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/wrench.svg" width="24" height="24" align="top" /> Tech Stack
+Parses and shows tailored actions for: URLs, text, email, phone, SMS,
+WhatsApp, Wi-Fi, vCard, calendar events, and geo coordinates.
 
-- **Framework**: Next.js 14+ (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 with MD3 theme
-- **Animations**: Framer Motion
-- **State Management**: Zustand
-- **QR Decoding**: jsQR
+- URLs show the **hostname first**, warn on suspicious links, and are **never
+  opened automatically**; `javascript:`/`data:`/`file:` are blocked.
+- Wi-Fi shows SSID/security with reveal/hide password and copy.
+- vCard downloads `.vcf`; events download `.ics`.
+- Geo opens in maps; text downloads `.txt`.
+- Copy and Web Share are used with fallbacks.
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/package.svg" width="24" height="24" align="top" /> Installation
+### Scan history
+
+- Saved locally in `localStorage` (timestamp, type, raw value, parsed data).
+- Favorites, per-item delete, and clear (keeps favorites), capped at 200
+  non-favorite entries.
+
+### Generator
+
+A step-based builder (Content → Design → Logo → Download):
+
+- Presets for link, text, e-mail, call, SMS, WhatsApp, Wi-Fi, vCard, event,
+  geo, social, app/deep link, image, and video (media presets encode a link to
+  where the media is hosted).
+- Colors, transparent background, size, quiet zone, error correction (L–H),
+  dot/module styles, finder styles, and an optional label frame.
+- **Browser-only logo/image embedding** — preview, resize, padding, and rounded
+  background; error correction is forced to H and oversized logos warn you.
+- **PNG, SVG, and WebP** download with meaningful filenames (`recqr-qr.*`).
+- Settings persist in `localStorage`.
+
+## Tech stack
+
+- [Next.js](https://nextjs.org/) (App Router, `output: "export"`)
+- React 19 + TypeScript
+- Tailwind CSS v4 with Material Design 3 tokens
+- [jsQR](https://github.com/cozmo/jsqr) for decoding
+- [`qrcode`](https://github.com/soldair/node-qrcode) for matrix generation
+- [Zustand](https://zustand-demo.pmnd.rs/) for persisted history
+- [Vitest](https://vitest.dev/) for tests
+
+## Quick start
 
 ```bash
-# Clone the repository
-git clone https://github.com/flessan/RECQR.git
-
-# Navigate to project directory
-cd RECQR
-
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the application.
-
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/hammer.svg" width="24" height="24" align="top" /> Build & Deploy
-
-### Frontend (GitHub Pages)
-```bash
-# Build for production (Static Export)
-npm run build
-```
-
-### API (Cloudflare Workers)
-The API runs on Cloudflare Workers for blazing-fast global edge performance.
+## Build & test
 
 ```bash
-cd worker
-npm install
-npm run deploy # requires Wrangler CLI authentication
+npm run lint
+npm test
+npm run build    # static export into ./out
 ```
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/smartphone.svg" width="24" height="24" align="top" /> Pages
+## GitHub Pages
 
-- `/` - Landing page
-- `/scanner` - QR Scanner
-- `/features` - Features overview
-- `/documentation` - Documentation
-- `/api` - API reference
-- `/support` - Support & FAQ
-- `/donate` - Support the project
+The included workflow (`.github/workflows/nextjs.yml`) builds and deploys on
+push to `main`. `basePath`/`assetPrefix` are configured automatically from the
+repository name. See [`docs/github-pages.md`](docs/github-pages.md).
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/lock.svg" width="24" height="24" align="top" /> Security
+## Optional Cloudflare Worker
 
-- Client-side QR decoding (no server upload required)
-- Safe URL handling
-- Permission management for camera
-- No automatic execution of dangerous actions
-- User confirmation for sensitive actions
+`worker/` contains an **optional** Hono Worker that generates QR SVGs over
+HTTP. The web app does not use it — scanning and generation are 100%
+client-side. There is no server-side decode endpoint by design. See
+[`docs/api.md`](docs/api.md).
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/globe.svg" width="24" height="24" align="top" /> Browser Support
+## Documentation
 
-- Chrome/Edge (recommended)
-- Firefox
-- Safari
-- Mobile browsers (iOS Safari, Chrome Mobile)
+See the [`docs/`](docs/README.md) directory:
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/file-text.svg" width="24" height="24" align="top" /> License
+- [Getting started](docs/getting-started.md)
+- [Scanner](docs/scanner.md)
+- [Generator](docs/generator.md)
+- [Supported QR formats](docs/qr-formats.md)
+- [Privacy](docs/privacy.md)
+- [Security model](docs/security.md)
+- [Browser support](docs/browser-support.md)
+- [GitHub Pages](docs/github-pages.md)
+- [Architecture](docs/architecture.md)
+- [Optional Edge API](docs/api.md)
+- [Troubleshooting](docs/troubleshooting.md)
+- [Contributing](docs/contributing.md)
 
-MIT License - see [LICENSE](LICENSE) for details
+## What is NOT included
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/users.svg" width="24" height="24" align="top" /> Contributing
+To avoid overpromising, RECQR does **not** provide:
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- Dynamic/editable QR codes
+- Analytics or scan tracking
+- Official SDKs (JS/React/Flutter/etc.)
+- Webhooks
+- A server-side QR image decoder
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/heart-handshake.svg" width="24" height="24" align="top" /> Support
+These could exist as separate services but are intentionally out of scope of
+the privacy-first web app.
 
-If you find this project helpful, please consider:
-- <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/star.svg" width="16" height="16" align="text-bottom" /> Starring the repository
-- <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/bug.svg" width="16" height="16" align="text-bottom" /> Reporting bugs
-- <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/lightbulb.svg" width="16" height="16" align="text-bottom" /> Suggesting features
-- <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/coffee.svg" width="16" height="16" align="text-bottom" /> Buying me a coffee
+## License
 
-## <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/mail.svg" width="24" height="24" align="top" /> Contact
-
-- GitHub Issues: [Report bugs](https://github.com/flessan/RECQR/issues)
-- Email: support@recqr.com
-
----
-
-Built with <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/icons/heart.svg" width="16" height="16" align="top" /> using Next.js and Material Design 3
+MIT — see [LICENSE](LICENSE).
