@@ -2,11 +2,146 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ==========================================================================
+   RECQR design system — "bold & playful", cool-tech palette
+   --------------------------------------------------------------------------
+   - Ink outlines + hard offset shadows instead of soft material elevation
+   - Big radii, chunky pills, expressive display type
+   - Indigo primary, cyan secondary, lemon tertiary accents
+   Component classes live in @layer components so page code stays declarative.
+   ========================================================================== */
+
 :root {
   color-scheme: light;
 }
 :root.dark {
   color-scheme: dark;
+}
+
+@theme {
+  /* ---- Light palette ---- */
+  --color-primary: #4f46e5;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #e0e7ff;
+  --color-on-primary-container: #1e1b4b;
+
+  --color-secondary: #0891b2;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #cffafe;
+  --color-on-secondary-container: #083344;
+
+  --color-tertiary: #ca8a04;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #fef08a;
+  --color-on-tertiary-container: #422006;
+
+  --color-error: #e11d48;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffe4e6;
+  --color-on-error-container: #4c0519;
+
+  --color-success: #059669;
+  --color-success-container: #d1fae5;
+  --color-on-success-container: #022c22;
+
+  --color-background: #f2f4ff;
+  --color-on-background: #0e1330;
+
+  --color-surface: #ffffff;
+  --color-on-surface: #0e1330;
+  --color-surface-variant: #e7ebff;
+  --color-on-surface-variant: #4d5892;
+
+  --color-outline: #0e1330;
+  --color-outline-variant: #c7cdf5;
+
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8f9ff;
+  --color-surface-container: #eef1ff;
+  --color-surface-container-high: #e4e9ff;
+  --color-surface-container-highest: #d9e0ff;
+}
+
+/* Dark palette */
+:root.dark {
+  --color-primary: #a5b4fc;
+  --color-on-primary: #1e1b4b;
+  --color-primary-container: #312e81;
+  --color-on-primary-container: #e0e7ff;
+
+  --color-secondary: #67e8f9;
+  --color-on-secondary: #083344;
+  --color-secondary-container: #155e75;
+  --color-on-secondary-container: #cffafe;
+
+  --color-tertiary: #fde047;
+  --color-on-tertiary: #422006;
+  --color-tertiary-container: #713f12;
+  --color-on-tertiary-container: #fef9c3;
+
+  --color-error: #fda4af;
+  --color-on-error: #4c0519;
+  --color-error-container: #881337;
+  --color-on-error-container: #ffe4e6;
+
+  --color-success: #6ee7b7;
+  --color-success-container: #065f46;
+  --color-on-success-container: #d1fae5;
+
+  --color-background: #080b1c;
+  --color-on-background: #eef1ff;
+
+  --color-surface: #101533;
+  --color-on-surface: #eef1ff;
+  --color-surface-variant: #1b2247;
+  --color-on-surface-variant: #a3aeda;
+
+  --color-outline: #55609e;
+  --color-outline-variant: #2b3564;
+
+  --color-surface-container-lowest: #0c1029;
+  --color-surface-container-low: #101533;
+  --color-surface-container: #161c3f;
+  --color-surface-container-high: #1d2450;
+  --color-surface-container-highest: #252d61;
+}
+
+/* Shape + shadow tokens (outside @theme so they don't shadow Tailwind scales) */
+:root {
+  --md-radius-xs: 8px;
+  --md-radius-sm: 12px;
+  --md-radius-md: 18px;
+  --md-radius-lg: 24px;
+  --md-radius-xl: 32px;
+  --md-radius-full: 9999px;
+
+  --md-space-xs: 4px;
+  --md-space-sm: 8px;
+  --md-space-md: 16px;
+  --md-space-lg: 24px;
+  --md-space-xl: 32px;
+
+  --ui-border: 2px;
+  --ui-shadow-color: #0e1330;
+  --ui-shadow-sm: 3px 3px 0 var(--ui-shadow-color);
+  --ui-shadow: 5px 5px 0 var(--ui-shadow-color);
+  --ui-shadow-lg: 8px 8px 0 var(--ui-shadow-color);
+}
+
+/* Softer offsets on phones so the hard shadows never look clipped by the
+   viewport edge. */
+@media (max-width: 640px) {
+  :root {
+    --ui-shadow-sm: 2px 2px 0 var(--ui-shadow-color);
+    --ui-shadow: 3px 3px 0 var(--ui-shadow-color);
+    --ui-shadow-lg: 5px 5px 0 var(--ui-shadow-color);
+  }
+}
+:root.dark {
+  --ui-shadow-color: #000000;
+  --ui-shadow-sm: 3px 3px 0 rgba(0, 0, 0, 0.6);
+  --ui-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+  --ui-shadow-lg: 8px 8px 0 rgba(0, 0, 0, 0.65);
 }
 
 @keyframes scanline {
@@ -15,6 +150,16 @@
   50% { transform: translateY(100%); opacity: 1; }
   60% { opacity: 0; }
   100% { transform: translateY(0); opacity: 0; }
+}
+
+@keyframes ui-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes ui-pop {
+  0% { transform: scale(0.96); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -26,208 +171,486 @@
   }
 }
 
-@theme {
-  /* Material Design 3 - Light Theme */
-  --color-primary: #6750A4;
-  --color-on-primary: #FFFFFF;
-  --color-primary-container: #EADDFF;
-  --color-on-primary-container: #21005D;
-  
-  --color-secondary: #625B71;
-  --color-on-secondary: #FFFFFF;
-  --color-secondary-container: #E8DEF8;
-  --color-on-secondary-container: #1D192B;
-  
-  --color-tertiary: #7D5260;
-  --color-on-tertiary: #FFFFFF;
-  --color-tertiary-container: #FFD8E4;
-  --color-on-tertiary-container: #31111D;
-  
-  --color-error: #B3261E;
-  --color-on-error: #FFFFFF;
-  --color-error-container: #F9DEDC;
-  --color-on-error-container: #410E0B;
-  
-  --color-background: #FFFBFE;
-  --color-on-background: #1C1B1F;
-  
-  --color-surface: #FFFBFE;
-  --color-on-surface: #1C1B1F;
-  --color-surface-variant: #E7E0EC;
-  --color-on-surface-variant: #49454F;
-  
-  --color-outline: #79747E;
-  --color-outline-variant: #CAC4D0;
-  
-  --color-surface-container-lowest: #FFFFFF;
-  --color-surface-container-low: #F7F2FA;
-  --color-surface-container: #F2ECF6;
-  --color-surface-container-high: #ECE6F0;
-  --color-surface-container-highest: #E6E0E9;
-
-  /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  
-  /* Border Radius */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 28px;
-  --radius-full: 9999px;
-}
-
-/* Dark theme */
-:root.dark {
-  --color-primary: #D0BCFF;
-  --color-on-primary: #371E73;
-  --color-primary-container: #4F378B;
-  --color-on-primary-container: #EADDFF;
-  
-  --color-secondary: #CCC2DC;
-  --color-on-secondary: #332D41;
-  --color-secondary-container: #4A4458;
-  --color-on-secondary-container: #E8DEF8;
-  
-  --color-tertiary: #EFB8C8;
-  --color-on-tertiary: #492532;
-  --color-tertiary-container: #633B48;
-  --color-on-tertiary-container: #FFD8E4;
-  
-  --color-error: #F2B8B5;
-  --color-on-error: #601410;
-  --color-error-container: #8C1D18;
-  --color-on-error-container: #F9DEDC;
-  
-  --color-background: #141218;
-  --color-on-background: #E6E1E5;
-  
-  --color-surface: #141218;
-  --color-on-surface: #E6E1E5;
-  --color-surface-variant: #49454F;
-  --color-on-surface-variant: #CAC4D0;
-  
-  --color-outline: #938F99;
-  --color-outline-variant: #49454F;
-  
-  --color-surface-container-lowest: #0F0D13;
-  --color-surface-container-low: #1D1B20;
-  --color-surface-container: #211F26;
-  --color-surface-container-high: #2B2930;
-  --color-surface-container-highest: #36343B;
+@layer base {
+  body {
+    font-synthesis-weight: none;
+  }
+  h1, h2, h3 {
+    letter-spacing: -0.03em;
+  }
+  /* Keyboard focus is always visible, in brand colors. */
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
-  /* Material Design 3 Elevation System */
-  .md-elevation-0 {
+  /* ---------------------------------------------------------------- cards */
+  .ui-card {
+    background-color: var(--color-surface-container-lowest);
+    border: var(--ui-border) solid var(--color-outline-variant);
+    border-radius: var(--md-radius-xl);
+    box-shadow: var(--ui-shadow-sm);
+  }
+
+  .ui-card-flat {
+    background-color: var(--color-surface-container-low);
+    border: var(--ui-border) solid var(--color-outline-variant);
+    border-radius: var(--md-radius-lg);
+  }
+
+  /* Accent variants used to color-block sections */
+  .ui-card-primary {
+    background-color: var(--color-primary-container);
+    border-color: var(--color-primary);
+    color: var(--color-on-primary-container);
+  }
+  .ui-card-secondary {
+    background-color: var(--color-secondary-container);
+    border-color: var(--color-secondary);
+    color: var(--color-on-secondary-container);
+  }
+  .ui-card-tertiary {
+    background-color: var(--color-tertiary-container);
+    border-color: var(--color-tertiary);
+    color: var(--color-on-tertiary-container);
+  }
+
+  .ui-hoverable {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .ui-hoverable:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--ui-shadow);
+  }
+
+  /* -------------------------------------------------------------- buttons */
+  .ui-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: var(--md-radius-full);
+    border: var(--ui-border) solid var(--color-outline);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    box-shadow: var(--ui-shadow-sm);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease,
+      opacity 0.15s ease;
+    cursor: pointer;
+  }
+  .ui-btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: var(--ui-shadow);
+  }
+  .ui-btn:active:not(:disabled) {
+    transform: translate(2px, 2px);
     box-shadow: none;
   }
-  
-  .md-elevation-1 {
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3),
-                0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  .ui-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
   }
-  
-  .md-elevation-2 {
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3),
-                0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  .ui-btn-lg {
+    padding: 0.95rem 1.8rem;
+    font-size: 1.0625rem;
   }
-  
-  .md-elevation-3 {
-    box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15),
-                0px 1px 3px rgba(0, 0, 0, 0.3);
+  .ui-btn-sm {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.875rem;
   }
-  
-  /* MD3 Button Styles */
-  .md-filled-button {
-    @apply bg-[var(--color-primary)] text-[var(--color-on-primary)];
-    @apply rounded-full px-6 py-2.5 font-medium;
-    @apply hover:shadow-md transition-all duration-200;
+
+  .ui-btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
   }
-  
-  .md-filled-tonal-button {
-    @apply bg-[var(--color-secondary-container)] text-[var(--color-on-secondary-container)];
-    @apply rounded-full px-6 py-2.5 font-medium;
-    @apply hover:shadow-md transition-all duration-200;
+  .ui-btn-secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-on-secondary);
   }
-  
-  .md-outlined-button {
-    @apply border-2 border-[var(--color-outline)];
-    @apply text-[var(--color-primary)];
-    @apply rounded-full px-6 py-2.5 font-medium;
-    @apply hover:bg-[var(--color-primary-container)] transition-all duration-200;
+  .ui-btn-tonal {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
   }
-  
-  .md-text-button {
-    @apply text-[var(--color-primary)];
-    @apply rounded-full px-6 py-2.5 font-medium;
-    @apply hover:bg-[var(--color-primary-container)] transition-all duration-200;
+  .ui-btn-surface {
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
   }
-  
-  /* MD3 Card */
+  .ui-btn-danger {
+    background-color: var(--color-error);
+    color: var(--color-on-error);
+  }
+  .ui-btn-ghost {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    font-weight: 600;
+  }
+  .ui-btn-ghost:hover:not(:disabled) {
+    background-color: var(--color-surface-container-high);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .ui-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--md-radius-full);
+    border: var(--ui-border) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+    cursor: pointer;
+  }
+  .ui-icon-btn:hover:not(:disabled) {
+    background-color: var(--color-surface-container-high);
+  }
+  .ui-icon-btn:active:not(:disabled) {
+    transform: translate(1px, 1px);
+  }
+  .ui-icon-btn[aria-pressed="true"],
+  .ui-icon-btn.is-active {
+    background-color: var(--color-primary-container);
+    border-color: var(--color-primary);
+    color: var(--color-on-primary-container);
+  }
+  .ui-icon-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ---------------------------------------------------------------- chips */
+  .ui-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--md-radius-full);
+    border: var(--ui-border) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface-variant);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.1;
+    transition: transform 0.12s ease, background-color 0.15s ease, color 0.15s ease,
+      border-color 0.15s ease;
+    cursor: pointer;
+  }
+  .ui-chip:hover:not(:disabled) {
+    background-color: var(--color-surface-container-high);
+    color: var(--color-on-surface);
+  }
+  .ui-chip.is-active {
+    background-color: var(--color-primary);
+    border-color: var(--color-outline);
+    color: var(--color-on-primary);
+    box-shadow: var(--ui-shadow-sm);
+  }
+  .ui-chip:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Equal-width segmented control */
+  .ui-segment {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .ui-segment > .ui-chip {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  /* --------------------------------------------------------------- fields */
+  .ui-field {
+    width: 100%;
+    min-width: 0;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--md-radius-md);
+    border: var(--ui-border) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    font-size: 0.9375rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .ui-field::placeholder {
+    color: var(--color-on-surface-variant);
+    opacity: 0.7;
+  }
+  .ui-field:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 22%, transparent);
+  }
+  textarea.ui-field {
+    resize: vertical;
+  }
+
+  .ui-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin-bottom: 0.35rem;
+  }
+
+  .ui-checkbox {
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 6px;
+    border: var(--ui-border) solid var(--color-outline-variant);
+    accent-color: var(--color-primary);
+    flex: none;
+  }
+
+  /* --------------------------------------------------------------- badges */
+  .ui-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--md-radius-full);
+    border: var(--ui-border) solid var(--color-outline-variant);
+    background-color: var(--color-surface-container-lowest);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-on-surface-variant);
+  }
+
+  .ui-step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    border-radius: var(--md-radius-full);
+    border: var(--ui-border) solid var(--color-outline);
+    background-color: var(--color-tertiary-container);
+    color: var(--color-on-tertiary-container);
+    font-weight: 900;
+    font-size: 0.875rem;
+    box-shadow: var(--ui-shadow-sm);
+  }
+
+  /* ------------------------------------------------------------ decoration */
+  .ui-display {
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+
+  .ui-underline {
+    background-image: linear-gradient(
+      to right,
+      var(--color-tertiary-container),
+      var(--color-tertiary-container)
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 0.35em;
+    background-position: 0 88%;
+    padding-inline: 0.1em;
+  }
+
+  .ui-dotgrid {
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--color-primary) 28%, transparent) 1.5px,
+      transparent 1.5px
+    );
+    background-size: 22px 22px;
+  }
+
+  /* --------------------------------------------- legacy Material aliases --
+     Older pages (docs, support, features, donate) still use these class
+     names; map them onto the new system so the whole site stays coherent. */
   .md-card {
-    @apply bg-[var(--color-surface-container-low)];
-    @apply rounded-[var(--radius-md)];
-    @apply shadow-md;
-    @apply overflow-hidden;
+    background-color: var(--color-surface-container-lowest);
+    border: var(--ui-border) solid var(--color-outline-variant);
+    border-radius: var(--md-radius-xl);
+    box-shadow: var(--ui-shadow-sm);
+    overflow: hidden;
   }
-  
-  /* MD3 Surface */
+  .md-elevation-0 { box-shadow: none; }
+  .md-elevation-1 { box-shadow: var(--ui-shadow-sm); }
+  .md-elevation-2 { box-shadow: var(--ui-shadow); }
+  .md-elevation-3 { box-shadow: var(--ui-shadow-lg); }
+
+  /* Tailwind v4 can't @apply custom component classes, so the legacy button
+     aliases repeat the .ui-btn declarations. */
+  .md-filled-button,
+  .md-filled-tonal-button,
+  .md-outlined-button,
+  .md-text-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: var(--md-radius-full);
+    border: var(--ui-border) solid var(--color-outline);
+    font-weight: 700;
+    line-height: 1.2;
+    box-shadow: var(--ui-shadow-sm);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+    cursor: pointer;
+  }
+  .md-filled-button:hover,
+  .md-filled-tonal-button:hover,
+  .md-outlined-button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: var(--ui-shadow);
+  }
+  .md-filled-button:active,
+  .md-filled-tonal-button:active,
+  .md-outlined-button:active,
+  .md-text-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+  }
+  .md-filled-button {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+  .md-filled-tonal-button {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+  }
+  .md-outlined-button {
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+  }
+  .md-text-button {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--color-primary);
+  }
+  .md-text-button:hover {
+    background-color: var(--color-surface-container-high);
+  }
+
   .md-surface {
-    @apply bg-[var(--color-surface)];
-    @apply text-[var(--color-on-surface)];
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
   }
-  
   .md-surface-variant {
-    @apply bg-[var(--color-surface-variant)];
-    @apply text-[var(--color-on-surface-variant)];
+    background-color: var(--color-surface-variant);
+    color: var(--color-on-surface-variant);
   }
 }
 
 @layer utilities {
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
-  
-  /* Custom scrollbar */
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-  
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
-  
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-[var(--color-outline-variant)]/50;
+    @apply bg-[var(--color-outline-variant)];
     @apply rounded-full;
   }
-  
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     @apply bg-[var(--color-outline)];
   }
 
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
-  
   ::-webkit-scrollbar-track {
-    @apply bg-[var(--color-surface)];
+    @apply bg-[var(--color-surface-container)];
   }
-  
   ::-webkit-scrollbar-thumb {
     @apply bg-[var(--color-outline-variant)];
     @apply rounded-full;
   }
-  
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-[var(--color-outline)];
   }
+}
+
+/* --------------------------- Generator layout -----------------------------
+ * Responsive two-column builder.
+ *   mobile / small tablet : single column, Content > Design > Preview > Download
+ *   >= 1024px             : controls | preview, both columns allowed to shrink
+ * Every track uses minmax(0, ...) so no child can force the page wider than
+ * the viewport (no overflow-x: hidden band-aids anywhere).
+ */
+.generator-layout {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "builder"
+    "preview"
+    "download";
+  gap: 1rem;
+  align-items: start;
+}
+
+.generator-layout > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (min-width: 640px) {
+  .generator-layout {
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .generator-layout {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-areas:
+      "builder preview"
+      "download preview";
+    gap: 1.5rem;
+  }
+}
+
+.generator-area-builder {
+  grid-area: builder;
+}
+.generator-area-preview {
+  grid-area: preview;
+  align-self: stretch;
+}
+.generator-area-download {
+  grid-area: download;
+}
+
+/* The QR SVG carries intrinsic width/height (needed for a correct download),
+   so scale it down to the preview surface without ever overflowing it. */
+.qr-preview-surface {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.qr-preview-surface svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  overflow: hidden;
 }

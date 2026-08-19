@@ -1,19 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  buildBitmap,
-  generateMatrix,
-  type QRBitmap,
-} from "@/lib/qr/renderer";
+import { buildBitmap, type QRBitmap } from "@/lib/qr/renderer";
+import { generateMatrix } from "@/lib/qr/renderer";
+import type { LoadedLogo } from "@/lib/qr/scene";
 import type { GeneratorDesign, LogoSettings } from "@/lib/qr/types";
-
-interface LoadedLogo {
-  dataUrl: string;
-  width: number;
-  height: number;
-  image: HTMLImageElement;
-}
 
 /**
  * Builds the QR bitmap. The matrix is computed synchronously with useMemo; the
@@ -40,12 +31,7 @@ export function useQRBitmap(
     let cancelled = false;
     void buildBitmap(payload, design, logo).then((b) => {
       if (cancelled || !b.logo) return;
-      setLoadedLogo({
-        dataUrl: b.logo.dataUrl,
-        width: b.logo.width,
-        height: b.logo.height,
-        image: b.logo.image,
-      });
+      setLoadedLogo(b.logo);
     });
     return () => {
       cancelled = true;
@@ -59,14 +45,7 @@ export function useQRBitmap(
     () => ({
       size: matrix.size,
       modules: matrix.modules,
-      logo: loadedLogo
-        ? {
-            dataUrl: loadedLogo.dataUrl,
-            width: loadedLogo.width,
-            height: loadedLogo.height,
-            image: loadedLogo.image,
-          }
-        : null,
+      logo: loadedLogo,
     }),
     [matrix, loadedLogo]
   );

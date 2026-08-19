@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { QrCode, Moon, Sun } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Menu, Moon, QrCode, Sun, X } from "lucide-react";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -22,7 +22,7 @@ export default function Navigation() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
+    const onScroll = () => setIsScrolled(window.scrollY > 12);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -52,101 +52,112 @@ export default function Navigation() {
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-[var(--color-surface-container-lowest)]/95 backdrop-blur-md md-elevation-2"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center space-x-2" aria-label="RECQR home">
-            <div className="w-10 h-10 bg-[var(--color-primary)] rounded-2xl flex items-center justify-center text-white">
-              <QrCode className="w-6 h-6" />
-            </div>
-            <span className="text-xl font-bold text-[var(--color-on-surface)]">RECQR</span>
-          </Link>
+    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
+      <nav
+        className={`mx-auto flex w-full max-w-6xl items-center gap-2 rounded-full border-2 px-3 py-2 transition-all duration-300 sm:px-4 ${
+          isScrolled
+            ? "border-[var(--color-outline-variant)] bg-[var(--color-surface-container-lowest)]/92 backdrop-blur-xl shadow-[var(--ui-shadow-sm)]"
+            : "border-transparent bg-[var(--color-surface-container-lowest)]/55 backdrop-blur-md"
+        }`}
+        aria-label="Main"
+      >
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2 rounded-full pr-2"
+          aria-label="RECQR home"
+        >
+          <span className="grid h-10 w-10 place-items-center rounded-2xl border-2 border-[var(--color-outline)] bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-[var(--ui-shadow-sm)]">
+            <QrCode className="h-5 w-5" />
+          </span>
+          <span className="text-xl font-black tracking-tight text-[var(--color-on-surface)]">
+            RECQR
+          </span>
+        </Link>
 
-          <div className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => (
+        <div className="mx-auto hidden items-center gap-1 lg:flex">
+          {navigation.map((item) => {
+            const active = pathname === item.href;
+            return (
               <Link
                 key={item.name}
                 href={item.href}
-                aria-current={pathname === item.href ? "page" : undefined}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  pathname === item.href
-                    ? "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]"
-                    : "text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)]"
+                aria-current={active ? "page" : undefined}
+                className={`rounded-full px-3.5 py-2 text-sm font-bold transition-colors ${
+                  active
+                    ? "bg-[var(--color-primary)] text-[var(--color-on-primary)]"
+                    : "text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)] hover:text-[var(--color-on-surface)]"
                 }`}
               >
                 {item.name}
               </Link>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              className="p-2 rounded-full text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)] transition-colors"
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <div className="hidden md:flex items-center gap-2">
-              <Link href="/scanner" className="px-4 py-2 rounded-full text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors">Scan</Link>
-              <Link href="/generator" className="md-filled-button">Create</Link>
-            </div>
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)]"
-              aria-label="Toggle menu"
-              aria-expanded={isMobileMenuOpen}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
+            );
+          })}
         </div>
-      </div>
+
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            className="ui-icon-btn h-10 w-10"
+          >
+            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
+
+          <Link href="/generator" className="ui-btn ui-btn-primary ui-btn-sm hidden sm:inline-flex">
+            Create QR
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen((v) => !v)}
+            className="ui-icon-btn h-10 w-10 lg:hidden"
+            aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+      </nav>
 
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[var(--color-surface-container-lowest)] border-t border-[var(--color-outline-variant)]"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            className="mx-auto mt-2 w-full max-w-6xl overflow-hidden rounded-3xl border-2 border-[var(--color-outline-variant)] bg-[var(--color-surface-container-lowest)] p-3 shadow-[var(--ui-shadow)] lg:hidden"
           >
-            <div className="px-4 py-3 space-y-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`block px-4 py-3 rounded-lg text-sm font-medium ${
-                    pathname === item.href
-                      ? "bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]"
-                      : "text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-highest)]"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <div className="pt-2 grid grid-cols-2 gap-2">
-                <Link href="/scanner" className="w-full md-outlined-button inline-flex justify-center">Scan QR</Link>
-                <Link href="/generator" className="w-full md-filled-button inline-flex justify-center">Create QR</Link>
-              </div>
+            <div className="grid gap-1">
+              {navigation.map((item) => {
+                const active = pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`rounded-2xl px-4 py-3 text-sm font-bold transition-colors ${
+                      active
+                        ? "bg-[var(--color-primary)] text-[var(--color-on-primary)]"
+                        : "text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)]"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Link href="/scanner" className="ui-btn ui-btn-surface ui-btn-sm">
+                Scan
+              </Link>
+              <Link href="/generator" className="ui-btn ui-btn-primary ui-btn-sm">
+                Create
+              </Link>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </header>
   );
 }

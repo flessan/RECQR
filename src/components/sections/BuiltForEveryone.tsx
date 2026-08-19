@@ -137,7 +137,7 @@ export default function BuiltForEveryone() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold text-[var(--color-on-surface)] mb-4">
+          <h2 className="ui-display mb-4 text-[clamp(2rem,5vw,3.25rem)] text-[var(--color-on-surface)]">
             Built For Everyone
           </h2>
           <p className="text-xl text-[var(--color-on-surface-variant)] max-w-2xl mx-auto">
@@ -148,30 +148,30 @@ export default function BuiltForEveryone() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* For Users */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="md-card p-8 h-full">
+            <div className="ui-card h-full p-8">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-[var(--color-primary)] text-white rounded-2xl flex items-center justify-center">
+                <div className="grid h-12 w-12 place-items-center rounded-2xl border-2 border-[var(--color-outline)] bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-[var(--ui-shadow-sm)]">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-[var(--color-on-surface)]">
+                <h3 className="text-2xl font-black tracking-tight text-[var(--color-on-surface)]">
                   For Users
                 </h3>
               </div>
               <div className="space-y-4">
                 {userFeatures.map((feature) => (
                   <div key={feature.title} className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-10 h-10 bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)] rounded-xl flex items-center justify-center">
+                    <div className="grid h-10 w-10 flex-none place-items-center rounded-xl border-2 border-[var(--color-outline-variant)] bg-[var(--color-primary-container)] text-[var(--color-on-primary-container)]">
                       {feature.icon}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-[var(--color-on-surface)] mb-1">
+                      <h4 className="mb-1 font-black tracking-tight text-[var(--color-on-surface)]">
                         {feature.title}
                       </h4>
                       <p className="text-sm text-[var(--color-on-surface-variant)]">
@@ -186,30 +186,30 @@ export default function BuiltForEveryone() {
 
           {/* For Developers */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="md-card p-8 h-full">
+            <div className="ui-card h-full p-8">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-[var(--color-tertiary)] text-white rounded-2xl flex items-center justify-center">
+                <div className="grid h-12 w-12 place-items-center rounded-2xl border-2 border-[var(--color-outline)] bg-[var(--color-secondary)] text-[var(--color-on-secondary)] shadow-[var(--ui-shadow-sm)]">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-[var(--color-on-surface)]">
+                <h3 className="text-2xl font-black tracking-tight text-[var(--color-on-surface)]">
                   For Developers
                 </h3>
               </div>
               <div className="space-y-4">
                 {developerFeatures.map((feature) => (
                   <div key={feature.title} className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-10 h-10 bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)] rounded-xl flex items-center justify-center">
+                    <div className="grid h-10 w-10 flex-none place-items-center rounded-xl border-2 border-[var(--color-outline-variant)] bg-[var(--color-secondary-container)] text-[var(--color-on-secondary-container)]">
                       {feature.icon}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-[var(--color-on-surface)] mb-1">
+                      <h4 className="mb-1 font-black tracking-tight text-[var(--color-on-surface)]">
                         {feature.title}
                       </h4>
                       <p className="text-sm text-[var(--color-on-surface-variant)]">

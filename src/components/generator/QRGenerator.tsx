@@ -7,11 +7,14 @@ import DesignEditor from "./DesignEditor";
 import LogoUploader from "./LogoUploader";
 import QRPreview from "./QRPreview";
 import DownloadControls from "./DownloadControls";
+import { ShieldCheck, Wand2 } from "lucide-react";
 
 export default function QRGenerator() {
   const {
     state,
     payload,
+    isReady,
+    contentHint,
     setPreset,
     setField,
     patchDesign,
@@ -21,42 +24,86 @@ export default function QRGenerator() {
   } = useGeneratorState();
 
   const bitmap = useQRBitmap(payload, state.design, state.logo);
-  const hasContent = payload.trim().length > 0;
+  const hasContent = isReady && payload.trim().length > 0;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <header className="text-center pt-4 pb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-on-surface)]">
-          QR Generator
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <header className="pt-2 pb-8 sm:pt-4">
+        <span className="ui-badge">
+          <Wand2 className="h-3.5 w-3.5" />
+          Generator
+        </span>
+        <h1 className="ui-display mt-4 max-w-3xl text-[clamp(2rem,5vw,3.25rem)] text-[var(--color-on-surface)]">
+          Build a QR you&apos;d actually{" "}
+          <span className="ui-underline whitespace-nowrap">want to scan</span>
         </h1>
-        <p className="text-[var(--color-on-surface-variant)] mt-2">
-          Design a custom QR code in four steps. Everything renders in your browser.
+        <p className="mt-3 max-w-2xl text-base font-medium text-[var(--color-on-surface-variant)] sm:text-lg">
+          Four steps, live preview, and an export that matches it pixel for pixel.
+          Everything renders in your browser.
         </p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Builder column */}
-        <div className="lg:col-span-3 space-y-6">
-          <div className="md-card p-5 sm:p-6 space-y-6">
+      <div className="generator-layout">
+        {/* Content + design + logo */}
+        <div className="generator-area-builder">
+          <div className="ui-card space-y-7 p-4 sm:p-6 lg:p-7">
             <ContentSelector
               preset={state.content.preset}
               data={state.content.data}
               onPreset={setPreset}
               onField={setField}
             />
-            <hr className="border-[var(--color-outline-variant)]" />
+            <Divider />
             <DesignEditor
               design={state.design}
               hasLogo={!!state.logo.src}
               onChange={patchDesign}
             />
-            <hr className="border-[var(--color-outline-variant)]" />
+            <Divider />
             <LogoUploader
               logo={state.logo}
               onChange={patchLogo}
               onReset={resetLogo}
             />
-            <hr className="border-[var(--color-outline-variant)]" />
+          </div>
+        </div>
+
+        {/* Preview (sticky on desktop, between design and download on mobile) */}
+        <div className="generator-area-preview">
+          <div className="ui-card space-y-4 p-4 sm:p-6 lg:sticky lg:top-28 lg:p-7">
+            <h2
+              id="preview-heading"
+              className="flex items-center gap-3 text-xl font-black tracking-tight text-[var(--color-on-surface)]"
+            >
+              <span className="ui-step">★</span>
+              Preview
+            </h2>
+            <QRPreview
+              bitmap={hasContent ? bitmap : null}
+              design={state.design}
+              logo={state.logo}
+              hint={contentHint}
+            />
+            <div className="ui-card-flat min-w-0 p-3">
+              <div className="ui-label">Payload</div>
+              <code className="block text-xs text-[var(--color-on-surface)] break-all whitespace-pre-wrap max-h-24 overflow-y-auto custom-scrollbar">
+                {hasContent ? payload : <span className="opacity-60">—</span>}
+              </code>
+            </div>
+            <p className="flex items-start gap-2 text-xs font-semibold leading-relaxed text-[var(--color-on-surface-variant)]">
+              <ShieldCheck className="mt-0.5 h-4 w-4 flex-none text-[var(--color-primary)]" />
+              <span>
+                <strong className="text-[var(--color-on-surface)]">Private by design:</strong>{" "}
+                generation and logo compositing run entirely on your device — nothing
+                is uploaded.
+              </span>
+            </p>
+          </div>
+        </div>
+
+        {/* Download */}
+        <div className="generator-area-download">
+          <div className="ui-card p-4 sm:p-6 lg:p-7">
             <DownloadControls
               bitmap={hasContent ? bitmap : null}
               design={state.design}
@@ -66,29 +113,13 @@ export default function QRGenerator() {
             />
           </div>
         </div>
-
-        {/* Sticky preview column */}
-        <div className="lg:col-span-2">
-          <div className="lg:sticky lg:top-24 md-card p-5 sm:p-6 space-y-4">
-            <h2 className="text-lg font-bold text-[var(--color-on-surface)] flex items-center gap-2">
-              <span className="bg-[var(--color-primary)] text-[var(--color-on-primary)] w-6 h-6 rounded-full inline-flex items-center justify-center text-sm">✓</span>
-              Preview
-            </h2>
-            <QRPreview bitmap={bitmap} design={state.design} logo={state.logo} />
-            <div className="rounded-xl bg-[var(--color-surface-container)] p-3">
-              <div className="text-xs uppercase tracking-wide text-[var(--color-on-surface-variant)] mb-1">Payload</div>
-              <code className="block text-xs text-[var(--color-on-surface)] break-all whitespace-pre-wrap max-h-24 overflow-y-auto custom-scrollbar">
-                {hasContent ? payload : <span className="opacity-60">—</span>}
-              </code>
-            </div>
-            <p className="text-xs text-[var(--color-on-surface-variant)] leading-relaxed">
-              <strong className="text-[var(--color-on-surface)]">Privacy:</strong>{" "}
-              QR generation and logo compositing run entirely on your device. No
-              content or image is uploaded to any server.
-            </p>
-          </div>
-        </div>
       </div>
     </div>
+  );
+}
+
+function Divider() {
+  return (
+    <hr className="border-0 border-t-2 border-dashed border-[var(--color-outline-variant)]" />
   );
 }

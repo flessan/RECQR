@@ -63,6 +63,77 @@ renderer draws modules directly instead of rasterizing a DOM screenshot.
 
 Filenames use the `recqr-qr` prefix (e.g. `recqr-qr.png`, `recqr-qr.svg`).
 
+## Design system
+
+The UI is built on a small token + component layer in `src/app/globals.css`:
+
+- **Palette** — indigo primary, cyan secondary, lemon tertiary, with full light
+  and dark ramps exposed as `--color-*` variables.
+- **Shape/shadow** — `--md-radius-*` and `--ui-shadow*` (hard offset shadows).
+  These deliberately live *outside* `@theme`, because Tailwind v4 maps `@theme`
+  keys onto its own scales (`--spacing-md` once rewrote `max-w-md` to 16px).
+- **Components** — `.ui-card`, `.ui-btn` (+ `-primary/-tonal/-surface/-danger/
+  -ghost`, `-sm/-lg`), `.ui-icon-btn`, `.ui-chip` (+ `.is-active`),
+  `.ui-segment`, `.ui-field`, `.ui-label`, `.ui-badge`, `.ui-step`,
+  `.ui-display`, `.ui-underline`, `.ui-dotgrid`.
+- Legacy `.md-card` / `.md-*-button` classes are aliased onto the same system so
+  older pages stay visually consistent.
+
+## Rendering geometry (single coordinate system)
+
+Preview, PNG, WebP and SVG all come from **one** layout model, so the preview is
+never an approximation of the download:
+
+```
+QR config -> computeLayout() -> QRLayout -> buildScene() -> Shape[]
+                                                 |-- sceneToSvg()  (SVG / preview)
+                                                 `-- paintScene()  (Canvas -> PNG/WebP)
+```
+
+`QRLayout` (`src/lib/qr/layout.ts`) is defined as:
+
+```
+totalModules = matrixSize + quietZone * 2
+moduleSize   = requestedSize / totalModules
+qrPixelSize  = totalModules * moduleSize   (== requestedSize)
+offsetX/Y    = quietZone * moduleSize
+outputWidth  = qrPixelSize
+outputHeight = qrPixelSize + frameHeight   (frameHeight = 4 modules when a label is set)
+```
+
+Every module, finder pattern, logo and frame label is positioned relative to
+`offsetX/offsetY`, so the invariant `0 <= x <= outputWidth` and
+`0 <= y <= outputHeight` always holds. The SVG carries
+`viewBox="0 0 outputWidth outputHeight"` with matching `width`/`height`
+attributes; the preview only scales it with CSS (`width:100%; height:auto`).
+
+Additional renderer guarantees:
+
+- Timing and alignment patterns are always drawn as solid squares, even in the
+  "rounded"/"dots" styles, because separated shapes there break real decoders.
+- A logo can never leave the QR data area, overlap a finder pattern, cover more
+  than 30% of the data area, or change the output dimensions; its aspect ratio
+  is preserved and error correction is forced to H.
+- Canvas exports use a device-pixel scale (2x by default, up to 4x for HiDPI)
+  without changing the coordinate system.
+
+## Automated visual / decode QA
+
+Beyond `npm run lint`, `npm test` and `npm run build`:
+
+```bash
+npm run dev                 # in one terminal
+
+npm run test:render         # Canvas + SVG rendered in real Chromium, decoded with jsQR
+npm run test:visual         # 7 viewports x 6 routes: overflow, clipping, preview decode
+npm run test:download       # downloads PNG/SVG from the UI and decodes them
+```
+
+These three scripts need `npm i --no-save playwright esbuild` once, and a
+Chromium/Chrome binary that can be selected with `CHROMIUM_PATH`. `npm test` itself also
+runs an offline round-trip suite that rasterises the generated SVG with resvg
+and decodes it with jsQR (`src/lib/qr/decode.test.ts`).
+
 ## State architecture
 
 The generator is split into small components rather than one monolith:
@@ -70,7 +141,7 @@ The generator is split into small components rather than one monolith:
 - `ContentSelector` — preset tabs and per-preset fields.
 - `DesignEditor` — colors, size, error correction, styles.
 - `LogoUploader` — local image handling.
-- `QRPreview` — live SVG preview.
+- `QRPreview` — live SVG preview (same renderer output as the download).
 - `DownloadControls` — format selection and download.
 - `useGeneratorState` — content/design/logo/output state with persistence.
 - `useQRBitmap` — builds the matrix and loaded logo.

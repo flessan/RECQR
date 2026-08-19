@@ -18,9 +18,16 @@ reused:
 - **`imageDecoder.ts`** — one pipeline for File, Blob, data/object URL, image,
   canvas, and ImageData inputs. Downscales, tries multiple scales/crops, and
   contrast-enhances before calling jsQR.
-- **`renderer.ts`** — uses the `qrcode` package for the matrix, then renders to
-  SVG string or 2D canvas with square/rounded/dot modules, three finder styles,
-  optional frame text, and a composited logo.
+- **`layout.ts`** — the single QR coordinate system (`QRLayout`): module size,
+  quiet zone, offsets, output width/height, finder origins, structural-module
+  detection, and logo box geometry.
+- **`scene.ts`** — `buildScene()` turns a matrix + design into a renderer-
+  agnostic list of primitive shapes expressed in `QRLayout` coordinates, plus
+  `shapeBounds`/`sceneBounds` used by the bounds tests.
+- **`renderer.ts`** — uses the `qrcode` package for the matrix, then serialises
+  the same scene to an SVG string (`sceneToSvg`) or paints it to a 2D canvas
+  (`paintScene`/`renderToCanvas`). Preview, PNG, WebP and SVG therefore share
+  identical geometry by construction.
 
 ## React layer
 

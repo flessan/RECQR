@@ -78,8 +78,19 @@ npm run dev      # http://localhost:3000
 
 ```bash
 npm run lint
-npm test
+npm test         # unit tests + SVG->pixels->jsQR decode round-trips (resvg)
 npm run build    # static export into ./out
+```
+
+Browser-level checks (require a running `npm run dev`, a one-off
+`npm i --no-save playwright esbuild`, and a Chromium binary — set
+`CHROMIUM_PATH` to use one you already have):
+
+```bash
+npm run test:render     # Canvas/SVG rendered in real Chromium, decoded with jsQR
+npm run test:visual     # 7 viewports x 6 routes: horizontal overflow, clipping,
+                        # QR bounds, preview decode, mobile section order
+npm run test:download   # downloads PNG/SVG from the UI and decodes them
 ```
 
 ## GitHub Pages
