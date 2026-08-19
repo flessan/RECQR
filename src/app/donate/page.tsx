@@ -141,7 +141,7 @@ export default function DonatePage() {
                   href={method.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-4 rounded-[var(--radius-md)] border-2 border-[var(--color-outline-variant)] hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-container)] transition-all duration-200 text-left"
+                  className="p-4 rounded-[var(--md-radius-md)] border-2 border-[var(--color-outline-variant)] hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-container)] transition-all duration-200 text-left"
                 >
                   <h3 className="font-semibold text-[var(--color-on-surface)] mb-1">
                     {method.name}

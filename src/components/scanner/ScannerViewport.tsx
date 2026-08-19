@@ -85,7 +85,11 @@ function Reticle({ active, success }: { active: boolean; success: boolean }) {
       <span className={`${corner} bottom-0 left-0 border-r-0 border-t-0`} style={{ borderColor: color }} />
       <span className={`${corner} bottom-0 right-0 border-l-0 border-t-0`} style={{ borderColor: color }} />
       {active && !success && (
-        <div className="absolute inset-x-0 top-0 h-0.5 bg-[var(--color-primary)]/80 animate-[scanline_2s_ease-in-out_infinite]" />
+        // The wrapper spans the full reticle height so translateY(100%) sweeps
+        // the whole frame (translating the 2px line itself moved it by 2px).
+        <div className="pointer-events-none absolute inset-0 overflow-hidden animate-[scanline_2s_ease-in-out_infinite]">
+          <div className="h-0.5 w-full bg-[var(--color-primary)]/80 shadow-[0_0_12px_var(--color-primary)]" />
+        </div>
       )}
     </>
   );

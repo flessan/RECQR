@@ -1,6 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { buildPayload, formatICalDate } from "./encoder";
-import type { GeneratorContent } from "./types";
+import {
+  buildPayload,
+  formatICalDate,
+  hasRequiredContent,
+  missingContentHint,
+} from "./encoder";
+import type { ContentPreset, GeneratorContent } from "./types";
 import { parseWiFi, parseVCard, parseCalendar } from "./parser";
 
 const c = (preset: GeneratorContent["preset"], data: Record<string, string>): GeneratorContent => ({ preset, data });
@@ -59,5 +64,42 @@ describe("formatICalDate", () => {
   it("formats datetime-local input", () => {
     expect(formatICalDate("2024-01-31T12:30")).toBe("20240131T123000");
     expect(formatICalDate("2024-01-31")).toBe("20240131T000000");
+  });
+});
+
+describe("hasRequiredContent", () => {
+  const cases: Array<[ContentPreset, Record<string, string>, boolean]> = [
+    ["link", { url: "" }, false],
+    ["link", { url: "example.com" }, true],
+    ["text", { text: "   " }, false],
+    ["text", { text: "hi" }, true],
+    ["email", { to: "" }, false],
+    ["email", { to: "a@b.com" }, true],
+    ["call", { number: "" }, false],
+    ["call", { number: "+15551234567" }, true],
+    ["sms", { number: "" }, false],
+    ["whatsapp", { number: "" }, false],
+    ["wifi", { ssid: "", password: "x" }, false],
+    ["wifi", { ssid: "Net" }, true],
+    ["vcard", { firstName: "", lastName: "", formattedName: "" }, false],
+    ["vcard", { lastName: "Doe" }, true],
+    ["event", { summary: "" }, false],
+    ["event", { summary: "Launch" }, true],
+    ["geo", { latitude: "1.5", longitude: "" }, false],
+    ["geo", { latitude: "abc", longitude: "2" }, false],
+    ["geo", { latitude: "-3.44", longitude: "114.84" }, true],
+    ["social", { url: "" }, false],
+    ["app", { url: "myapp://open" }, true],
+  ];
+
+  for (const [preset, data, expected] of cases) {
+    it(`${preset} with ${JSON.stringify(data)} -> ${expected}`, () => {
+      expect(hasRequiredContent({ preset, data })).toBe(expected);
+    });
+  }
+
+  it("returns a hint only while content is incomplete", () => {
+    expect(missingContentHint({ preset: "wifi", data: { ssid: "" } })).toMatch(/SSID/);
+    expect(missingContentHint({ preset: "wifi", data: { ssid: "Net" } })).toBeNull();
   });
 });

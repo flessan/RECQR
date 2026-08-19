@@ -123,6 +123,70 @@ export function formatICalDate(value: string): string {
   return `${y}${mo}${d}T${h || "00"}${mi || "00"}00`;
 }
 
+/**
+ * Required field(s) per preset. A payload is only meaningful once these are
+ * filled in — otherwise `buildPayload` produces placeholders such as `tel:`,
+ * `geo:,` or an empty-SSID Wi-Fi string, which encode into a QR nobody can use.
+ */
+const REQUIRED_FIELDS: Record<ContentPreset, string[]> = {
+  link: ["url"],
+  social: ["url"],
+  app: ["url"],
+  image: ["url"],
+  video: ["url"],
+  text: ["text"],
+  email: ["to"],
+  call: ["number"],
+  sms: ["number"],
+  whatsapp: ["number"],
+  wifi: ["ssid"],
+  vcard: ["formattedName", "firstName", "lastName"],
+  event: ["summary"],
+  geo: ["latitude", "longitude"],
+};
+
+/**
+ * True when the active preset has everything it needs to produce a usable
+ * payload. vCard accepts any name field; geo needs both coordinates.
+ */
+export function hasRequiredContent(content: GeneratorContent): boolean {
+  const required = REQUIRED_FIELDS[content.preset] ?? [];
+  if (!required.length) return buildPayload(content).trim().length > 0;
+  const filled = (k: string) => clean(content.data[k]).length > 0;
+  if (content.preset === "vcard") return required.some(filled);
+  if (content.preset === "geo") {
+    return required.every(
+      (k) => filled(k) && Number.isFinite(Number(clean(content.data[k])))
+    );
+  }
+  return required.every(filled);
+}
+
+/** Human-readable hint describing what is still missing, or null when ready. */
+export function missingContentHint(content: GeneratorContent): string | null {
+  if (hasRequiredContent(content)) return null;
+  switch (content.preset) {
+    case "text":
+      return "Enter the text you want to encode.";
+    case "email":
+      return "Enter the recipient e-mail address.";
+    case "call":
+    case "sms":
+    case "whatsapp":
+      return "Enter a phone number.";
+    case "wifi":
+      return "Enter the network name (SSID).";
+    case "vcard":
+      return "Enter at least a name.";
+    case "event":
+      return "Enter the event title.";
+    case "geo":
+      return "Enter both latitude and longitude.";
+    default:
+      return "Enter a URL to generate the QR code.";
+  }
+}
+
 /** Default per-preset content (used when switching presets or resetting). */
 export function defaultContent(preset: ContentPreset): Record<string, string> {
   switch (preset) {

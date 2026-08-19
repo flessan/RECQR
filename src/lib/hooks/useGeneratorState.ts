@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { buildPayload, defaultContent } from "@/lib/qr/encoder";
+import {
+  buildPayload,
+  defaultContent,
+  hasRequiredContent,
+  missingContentHint,
+} from "@/lib/qr/encoder";
 import type {
   ContentPreset,
   GeneratorDesign,
@@ -82,6 +87,8 @@ export function useGeneratorState() {
   }, [state]);
 
   const payload = buildPayload(state.content);
+  const isReady = hasRequiredContent(state.content);
+  const contentHint = missingContentHint(state.content);
 
   const setPreset = (preset: ContentPreset) =>
     setState((s) => ({ ...s, content: { preset, data: defaultContent(preset) } }));
@@ -117,6 +124,8 @@ export function useGeneratorState() {
   return {
     state,
     payload,
+    isReady,
+    contentHint,
     setPreset,
     setField,
     patchDesign,
