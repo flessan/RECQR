@@ -104,7 +104,7 @@ export default function SupportPage() {
 
             <div className="flex flex-wrap justify-center gap-4">
               <a
-                href="/donate"
+                href="./donate"
                 className="md-filled-button-donate inline-flex items-center gap-2"
               >
                 {/* GitHub */}
