@@ -225,7 +225,7 @@ function KV({ rows }: { rows: KVRow[] }) {
       {rows.map(([k, v]) => (
         <div key={k}>
           <dt className="ui-label mb-0">{k}</dt>
-          <dd className="break-all text-sm font-semibold text-[var(--color-on-surface)]">{v || "—"}</dd>
+          <dd className="break-all text-sm font-semibold text-[var(--color-on-surface)]">{v || "-"}</dd>
         </div>
       ))}
     </dl>

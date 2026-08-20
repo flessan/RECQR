@@ -39,7 +39,7 @@ export default function LogoUploader({ logo, onChange, onReset }: Props) {
         >
           <span className="grid h-12 w-12 place-items-center rounded-2xl border-2 border-[var(--color-outline)] bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)] shadow-[var(--ui-shadow-sm)]"><ImagePlus className="h-6 w-6" /></span>
           <span className="text-base font-black tracking-tight text-[var(--color-on-surface)]">Upload a logo</span>
-          <span className="text-xs font-semibold text-[var(--color-on-surface-variant)]">PNG, JPG, SVG or WebP — processed locally</span>
+          <span className="text-xs font-semibold text-[var(--color-on-surface-variant)]">PNG, JPG, SVG or WebP - processed locally</span>
         </button>
       ) : (
         <div className="ui-card-flat flex items-center gap-3 p-3">

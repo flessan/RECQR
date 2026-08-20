@@ -31,7 +31,7 @@ export interface QRLayout {
   frameHeight: number;
   outputWidth: number;
   outputHeight: number;
-  /** Pixel offset of matrix cell (0,0) — i.e. the quiet zone. */
+  /** Pixel offset of matrix cell (0,0) - i.e. the quiet zone. */
   offsetX: number;
   offsetY: number;
 }
@@ -47,7 +47,7 @@ export function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-/** Round to 3 decimals — enough precision for sub-pixel accurate output. */
+/** Round to 3 decimals - enough precision for sub-pixel accurate output. */
 export function round3(value: number): number {
   return Math.round(value * 1000) / 1000;
 }
@@ -208,7 +208,7 @@ export function alignmentCenters(matrixSize: number): number[] {
 /**
  * True for timing patterns and alignment patterns. These carry the geometry a
  * decoder uses to lock onto the module grid, so they are always painted as
- * solid squares even in "dots"/"rounded" styles — separated shapes there break
+ * solid squares even in "dots"/"rounded" styles - separated shapes there break
  * real-world decoding.
  */
 export function isStructuralModule(

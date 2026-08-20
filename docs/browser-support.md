@@ -1,7 +1,7 @@
 # Browser Support
 
 RECQR uses standard, widely-supported web APIs. Features are applied with
-progressive enhancement — if an API is unavailable, the related control is
+progressive enhancement - if an API is unavailable, the related control is
 hidden rather than failing.
 
 ## Required
@@ -14,7 +14,7 @@ hidden rather than failing.
 | Feature | API used | Fallback |
 | ------- | -------- | -------- |
 | Camera scanning | `navigator.mediaDevices.getUserMedia` | Upload / paste / drag-drop image scanning |
-| Image decode | Canvas 2D + jsQR | — |
+| Image decode | Canvas 2D + jsQR | - |
 | Torch | `MediaTrackCapabilities.torch` + `applyConstraints` | Button hidden |
 | Zoom | `MediaTrackCapabilities.zoom` | Slider hidden |
 | Camera switch | `facingMode` | Button hidden when only one camera |
@@ -23,7 +23,7 @@ hidden rather than failing.
 | Clipboard paste | `clipboardData.items` / `navigator.clipboard.read()` | File picker / drop zone |
 | Share | `navigator.share` | Button hidden; Copy remains |
 | Copy | `navigator.clipboard.writeText` | Legacy `execCommand('copy')` |
-| Downloads | `URL.createObjectURL` + anchor click | — |
+| Downloads | `URL.createObjectURL` + anchor click | - |
 | History | `localStorage` | In-memory if storage is unavailable |
 
 ## HTTPS / secure context

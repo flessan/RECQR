@@ -5,10 +5,10 @@ browser. This directory contains the full documentation.
 
 ## Start here
 
-- [Getting started](./getting-started.md) — install, develop, and build.
-- [GitHub Pages deployment](./github-pages.md) — static export and `basePath`.
-- [Scanner](./scanner.md) — camera, upload, paste, drag & drop.
-- [Generator](./generator.md) — presets, design, logos, and export.
+- [Getting started](./getting-started.md) - install, develop, and build.
+- [GitHub Pages deployment](./github-pages.md) - static export and `basePath`.
+- [Scanner](./scanner.md) - camera, upload, paste, drag & drop.
+- [Generator](./generator.md) - presets, design, logos, and export.
 - [Supported QR formats](./qr-formats.md).
 
 ## Topics

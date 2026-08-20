@@ -39,7 +39,7 @@ const PRESETS: Array<{ id: ContentPreset; label: string; icon: React.ReactNode }
   { id: "social", label: "Social", icon: <Globe className="w-4 h-4" /> },
   { id: "app", label: "App/deep link", icon: <AppWindow className="w-4 h-4" /> },
   { id: "image", label: "Image", icon: <ImageIcon className="w-4 h-4" /> },
-  { id: "video", label: "Video", icon: <Video className="w-4 h-4" /> },
+  { id: "video", label: "Video/YouTube", icon: <Video className="w-4 h-4" /> },
 ];
 
 export default function ContentSelector({
@@ -137,7 +137,7 @@ function Fields({
         <>
           {field("Image URL", "url", v("url"), onField, { placeholder: "https://example.com/photo.jpg", type: "url" })}
           <p className="sm:col-span-2 text-xs text-[var(--color-on-surface-variant)]">
-            QR codes cannot store an image directly — this encodes a link to where the image is hosted. The image itself is never uploaded.
+            QR codes cannot store an image directly - this encodes a link to where the image is hosted. The image itself is never uploaded.
           </p>
         </>
       );

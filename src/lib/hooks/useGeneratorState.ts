@@ -55,7 +55,7 @@ function loadInitial(): GeneratorState {
       return {
         content: parsed.content ?? { preset: "link", data: defaultContent("link") },
         design: { ...DEFAULT_DESIGN, ...parsed.design },
-        // Don't restore the object URL across reloads — it would be invalid.
+        // Don't restore the object URL across reloads - it would be invalid.
         logo: { ...DEFAULT_LOGO, ...parsed.logo, src: null, name: null },
         output: { format: parsed.output?.format ?? "png" },
       };

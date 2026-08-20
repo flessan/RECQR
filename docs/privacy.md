@@ -4,19 +4,19 @@ RECQR is designed to keep your data on your device.
 
 ## What stays in your browser
 
-- **Camera frames** — decoded locally with [jsQR](https://github.com/cozmo/jsQR).
+- **Camera frames** - decoded locally with [jsQR](https://github.com/cozmo/jsQR).
   No frame is transmitted.
-- **Uploaded, dropped, or pasted images** — decoded through
+- **Uploaded, dropped, or pasted images** - decoded through
   `src/lib/qr/imageDecoder.ts`. The file is read into memory, drawn to a
   canvas, and decoded without any network request.
-- **Generator content and logos** — the QR matrix is generated with the `qrcode`
+- **Generator content and logos** - the QR matrix is generated with the `qrcode`
   library and composed on a canvas/SVG in the page. Logos are held in object
   URLs; nothing is uploaded.
-- **Scan history** — stored in `localStorage` under `recqr-scan-history`. It is
+- **Scan history** - stored in `localStorage` under `recqr-scan-history`. It is
   never sent anywhere.
-- **Generator settings** — stored in `localStorage` under
+- **Generator settings** - stored in `localStorage` under
   `recqr-generator-state` (logo object URLs are intentionally not persisted).
-- **Theme preference** — stored as `recqr-theme`.
+- **Theme preference** - stored as `recqr-theme`.
 
 ## What does NOT happen
 

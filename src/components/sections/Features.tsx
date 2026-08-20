@@ -50,7 +50,7 @@ const FEATURES = [
   {
     icon: FileImage,
     title: "Image & paste",
-    description: "Upload, drag & drop or Ctrl/⌘+V a screenshot — decoded on device.",
+    description: "Upload, drag & drop or Ctrl/⌘+V a screenshot - decoded on device.",
     tone: "plain",
   },
   {
@@ -100,7 +100,7 @@ export default function Features() {
           </h2>
           <p className="mt-4 text-lg font-medium text-[var(--color-on-surface-variant)]">
             Scanning, parsing, generating and exporting all run in the browser tab.
-            Nothing is uploaded — there is no server to upload to.
+            Nothing is uploaded - there is no server to upload to.
           </p>
         </motion.div>
 
@@ -137,7 +137,7 @@ export default function Features() {
         >
           <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-on-surface)]">
             <Fingerprint className="h-5 w-5 text-[var(--color-primary)]" />
-            No account, no cookies, no analytics — ever.
+            No account, no cookies, no analytics - ever.
           </p>
           <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-on-surface-variant)]">
             <Star className="h-5 w-5 text-[var(--color-tertiary)]" />

@@ -29,7 +29,7 @@ npm run build
 ```
 
 The static site is emitted to `out/`. It contains only HTML, CSS, and
-JavaScript — no Node server is required.
+JavaScript - no Node server is required.
 
 ## Test
 

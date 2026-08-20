@@ -30,7 +30,7 @@ const URL_SHORTENERS = new Set([
 
 /**
  * Parse a string as a URL and decide whether it is safe to offer an "open"
- * action for. Never throws — invalid input returns null.
+ * action for. Never throws - invalid input returns null.
  */
 export function analyzeUrl(raw: string): UrlPayload | null {
   let url: URL;
@@ -83,7 +83,7 @@ export function analyzeUrl(raw: string): UrlPayload | null {
 export function isLikelyUrl(raw: string): boolean {
   const trimmed = raw.trim();
   if (/^(https?|mailto|tel):/i.test(trimmed)) return true;
-  // Bare "example.com" — only treat as URL when it has a path-like dot+TLD.
+  // Bare "example.com" - only treat as URL when it has a path-like dot+TLD.
   return /^[a-z0-9-]+(\.[a-z0-9-]+)+(\/|[:?#]|$)/i.test(trimmed);
 }
 

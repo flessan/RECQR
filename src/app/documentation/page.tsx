@@ -59,7 +59,7 @@ export default function DocumentationPage() {
       <Navigation />
 
       <div className="pt-24 max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8 pb-16">
-        
+
         {/* Sidebar Navigation */}
         <aside className="hidden md:block w-64 flex-shrink-0 sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto pr-6 custom-scrollbar border-r border-[var(--color-outline-variant)]/30">
           <div className="space-y-8 pb-8">
@@ -74,11 +74,10 @@ export default function DocumentationPage() {
                     <li key={item.id}>
                       <button
                         onClick={() => scrollTo(item.id)}
-                        className={`text-sm w-full text-left py-1.5 px-3 rounded-md transition-colors relative -left-[1px] border-l-2 ${
-                          activeSection === item.id 
-                            ? "border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/10 font-semibold" 
+                        className={`text-sm w-full text-left py-1.5 px-3 rounded-md transition-colors relative -left-[1px] border-l-2 ${activeSection === item.id
+                            ? "border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/10 font-semibold"
                             : "border-transparent text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-highest)]"
-                        }`}
+                          }`}
                       >
                         {item.name}
                       </button>
@@ -92,9 +91,9 @@ export default function DocumentationPage() {
 
         {/* Main Content Area */}
         <article className="flex-1 min-w-0 max-w-4xl pt-8 md:pt-0">
-          
+
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-16">
-            
+
             {/* Intro */}
             <section id="intro" className="scroll-mt-32">
               <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--color-on-surface)] tracking-tight mb-4">
@@ -133,14 +132,14 @@ export default function DocumentationPage() {
               </h2>
               <div className="prose prose-invert prose-p:text-[var(--color-on-surface-variant)] prose-strong:text-[var(--color-on-surface)] max-w-none">
                 <p>
-                  Most QR code platforms are slow, littered with ads, and require a backend server just to decode an image. 
+                  Most QR code platforms are slow, littered with ads, and require a backend server just to decode an image.
                   <strong> RECQR flips this paradigm</strong>.
                 </p>
                 <ul>
                   <li><strong>100% Client-Side:</strong> QR scanning, image decoding, and generation all run in your browser with jsQR and the Canvas API. Your camera feed and images never touch a server.</li>
                   <li><strong>Rich Payloads:</strong> Automatically identifies URLs, Wi-Fi, vCards, calendar events, geo coordinates, email, SMS, and WhatsApp links.</li>
                   <li><strong>Private by Design:</strong> Scan history is stored in localStorage on your device only. There are no accounts, cookies, or analytics.</li>
-                  <li><strong>Optional Edge API:</strong> A small Cloudflare Worker can generate QR SVGs over HTTP if you need server-side rendering — it is never required by the web app.</li>
+                  <li><strong>Optional Edge API:</strong> A small Cloudflare Worker can generate QR SVGs over HTTP if you need server-side rendering - it is never required by the web app.</li>
                 </ul>
               </div>
             </section>
@@ -161,9 +160,9 @@ export default function DocumentationPage() {
                 <div className="p-4 overflow-x-auto custom-scrollbar">
                   <pre className="text-sm font-mono text-green-400">
                     <code>git clone https://github.com/flessan/RECQR.git
-cd RECQR
-npm install
-npm run dev</code>
+                      cd RECQR
+                      npm install
+                      npm run dev</code>
                   </pre>
                 </div>
               </div>
@@ -206,7 +205,7 @@ npm run dev</code>
               <ul className="list-disc pl-6 space-y-2 text-[var(--color-on-surface-variant)]">
                 <li>Camera frames and uploaded/pasted images never leave the browser.</li>
                 <li>Dangerous protocols (javascript:, data:, file:, vbscript:) are blocked from &quot;open&quot; actions.</li>
-                <li>Decoded content is rendered as text — never injected as HTML.</li>
+                <li>Decoded content is rendered as text - never injected as HTML.</li>
                 <li>No third-party analytics, trackers, or network calls in the client app.</li>
               </ul>
             </section>
@@ -236,16 +235,16 @@ npm run dev</code>
                 API Reference
               </h2>
               <p className="text-[var(--color-on-surface-variant)] mb-4">
-                The optional Cloudflare Worker exposes a single endpoint to generate QR codes as SVG over HTTP. The web app itself does not use it — generation happens in the browser. There is no server-side decoding.
+                The optional Cloudflare Worker exposes a single endpoint to generate QR codes as SVG over HTTP. The web app itself does not use it - generation happens in the browser. There is no server-side decoding.
               </p>
-              
+
               <div className="mb-8">
                 <h3 className="text-xl font-bold text-[var(--color-on-surface)] mb-2">Generate QR Code</h3>
                 <div className="flex items-center space-x-2 mb-4">
                   <span className="bg-green-500/20 text-green-500 font-mono text-xs px-2 py-1 rounded">GET</span>
                   <code className="text-sm text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-high)] px-2 py-1 rounded">/v1/qr/generate</code>
                 </div>
-                
+
                 <div className="bg-[var(--color-surface-container)] rounded-xl border border-[var(--color-outline-variant)]/50 overflow-hidden">
                   <table className="w-full text-left text-sm">
                     <thead className="bg-[var(--color-surface-container-high)] border-b border-[var(--color-outline-variant)]/50">

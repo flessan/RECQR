@@ -36,7 +36,7 @@ Returns `{ "status": "ok" }`.
 
 | Param    | Default    | Description |
 | -------- | ---------- | ----------- |
-| `text`   | —          | **Required.** Content to encode. |
+| `text`   | -          | **Required.** Content to encode. |
 | `margin` | `2`        | Quiet-zone modules. |
 | `fg`     | `#000000`  | Foreground color. |
 | `bg`     | `#ffffff`  | Background color. |

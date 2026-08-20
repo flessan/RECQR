@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ==========================================================================
-   RECQR design system — "bold & playful", cool-tech palette
+   RECQR design system - "bold & playful", cool-tech palette
    --------------------------------------------------------------------------
    - Ink outlines + hard offset shadows instead of soft material elevation
    - Big radii, chunky pills, expressive display type
@@ -14,6 +14,7 @@
 :root {
   color-scheme: light;
 }
+
 :root.dark {
   color-scheme: dark;
 }
@@ -76,7 +77,7 @@
 
   --color-tertiary: #fde047;
   --color-on-tertiary: #422006;
-  --color-tertiary-container: #713f12;
+  --color-tertiary-container: #217b00;
   --color-on-tertiary-container: #fef9c3;
 
   --color-error: #fda4af;
@@ -137,6 +138,7 @@
     --ui-shadow-lg: 5px 5px 0 var(--ui-shadow-color);
   }
 }
+
 :root.dark {
   --ui-shadow-color: #000000;
   --ui-shadow-sm: 3px 3px 0 rgba(0, 0, 0, 0.6);
@@ -145,25 +147,59 @@
 }
 
 @keyframes scanline {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { opacity: 1; }
-  50% { transform: translateY(100%); opacity: 1; }
-  60% { opacity: 0; }
-  100% { transform: translateY(0); opacity: 0; }
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  50% {
+    transform: translateY(100%);
+    opacity: 1;
+  }
+
+  60% {
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
 }
 
 @keyframes ui-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes ui-pop {
-  0% { transform: scale(0.96); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
@@ -175,9 +211,13 @@
   body {
     font-synthesis-weight: none;
   }
-  h1, h2, h3 {
+
+  h1,
+  h2,
+  h3 {
     letter-spacing: -0.03em;
   }
+
   /* Keyboard focus is always visible, in brand colors. */
   :focus-visible {
     outline: 3px solid var(--color-primary);
@@ -186,6 +226,7 @@
 }
 
 @layer components {
+
   /* ---------------------------------------------------------------- cards */
   .ui-card {
     background-color: var(--color-surface-container-lowest);
@@ -206,11 +247,13 @@
     border-color: var(--color-primary);
     color: var(--color-on-primary-container);
   }
+
   .ui-card-secondary {
     background-color: var(--color-secondary-container);
     border-color: var(--color-secondary);
     color: var(--color-on-secondary-container);
   }
+
   .ui-card-tertiary {
     background-color: var(--color-tertiary-container);
     border-color: var(--color-tertiary);
@@ -220,6 +263,7 @@
   .ui-hoverable {
     transition: transform 0.18s ease, box-shadow 0.18s ease;
   }
+
   .ui-hoverable:hover {
     transform: translate(-2px, -2px);
     box-shadow: var(--ui-shadow);
@@ -242,24 +286,29 @@
       opacity 0.15s ease;
     cursor: pointer;
   }
+
   .ui-btn:hover:not(:disabled) {
     transform: translate(-1px, -1px);
     box-shadow: var(--ui-shadow);
   }
+
   .ui-btn:active:not(:disabled) {
     transform: translate(2px, 2px);
     box-shadow: none;
   }
+
   .ui-btn:disabled {
     opacity: 0.45;
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
   }
+
   .ui-btn-lg {
     padding: 0.95rem 1.8rem;
     font-size: 1.0625rem;
   }
+
   .ui-btn-sm {
     padding: 0.45rem 0.9rem;
     font-size: 0.875rem;
@@ -269,28 +318,34 @@
     background-color: var(--color-primary);
     color: var(--color-on-primary);
   }
+
   .ui-btn-secondary {
     background-color: var(--color-secondary);
     color: var(--color-on-secondary);
   }
+
   .ui-btn-tonal {
     background-color: var(--color-primary-container);
     color: var(--color-on-primary-container);
   }
+
   .ui-btn-surface {
     background-color: var(--color-surface-container-lowest);
     color: var(--color-on-surface);
   }
+
   .ui-btn-danger {
     background-color: var(--color-error);
     color: var(--color-on-error);
   }
+
   .ui-btn-ghost {
     background-color: transparent;
     border-color: transparent;
     box-shadow: none;
     font-weight: 600;
   }
+
   .ui-btn-ghost:hover:not(:disabled) {
     background-color: var(--color-surface-container-high);
     transform: none;
@@ -310,18 +365,22 @@
     transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
     cursor: pointer;
   }
+
   .ui-icon-btn:hover:not(:disabled) {
     background-color: var(--color-surface-container-high);
   }
+
   .ui-icon-btn:active:not(:disabled) {
     transform: translate(1px, 1px);
   }
+
   .ui-icon-btn[aria-pressed="true"],
   .ui-icon-btn.is-active {
     background-color: var(--color-primary-container);
     border-color: var(--color-primary);
     color: var(--color-on-primary-container);
   }
+
   .ui-icon-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -344,16 +403,19 @@
       border-color 0.15s ease;
     cursor: pointer;
   }
+
   .ui-chip:hover:not(:disabled) {
     background-color: var(--color-surface-container-high);
     color: var(--color-on-surface);
   }
+
   .ui-chip.is-active {
     background-color: var(--color-primary);
     border-color: var(--color-outline);
     color: var(--color-on-primary);
     box-shadow: var(--ui-shadow-sm);
   }
+
   .ui-chip:disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -364,7 +426,8 @@
     display: flex;
     gap: 0.4rem;
   }
-  .ui-segment > .ui-chip {
+
+  .ui-segment>.ui-chip {
     flex: 1 1 0;
     min-width: 0;
     justify-content: center;
@@ -382,15 +445,18 @@
     font-size: 0.9375rem;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
+
   .ui-field::placeholder {
     color: var(--color-on-surface-variant);
     opacity: 0.7;
   }
+
   .ui-field:focus {
     outline: none;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 22%, transparent);
   }
+
   textarea.ui-field {
     resize: vertical;
   }
@@ -452,11 +518,9 @@
   }
 
   .ui-underline {
-    background-image: linear-gradient(
-      to right,
-      var(--color-tertiary-container),
-      var(--color-tertiary-container)
-    );
+    background-image: linear-gradient(to right,
+        var(--color-tertiary-container),
+        var(--color-tertiary-container));
     background-repeat: no-repeat;
     background-size: 100% 0.35em;
     background-position: 0 88%;
@@ -464,10 +528,8 @@
   }
 
   .ui-dotgrid {
-    background-image: radial-gradient(
-      color-mix(in srgb, var(--color-primary) 28%, transparent) 1.5px,
-      transparent 1.5px
-    );
+    background-image: radial-gradient(color-mix(in srgb, var(--color-primary) 28%, transparent) 1.5px,
+        transparent 1.5px);
     background-size: 22px 22px;
   }
 
@@ -481,14 +543,27 @@
     box-shadow: var(--ui-shadow-sm);
     overflow: hidden;
   }
-  .md-elevation-0 { box-shadow: none; }
-  .md-elevation-1 { box-shadow: var(--ui-shadow-sm); }
-  .md-elevation-2 { box-shadow: var(--ui-shadow); }
-  .md-elevation-3 { box-shadow: var(--ui-shadow-lg); }
+
+  .md-elevation-0 {
+    box-shadow: none;
+  }
+
+  .md-elevation-1 {
+    box-shadow: var(--ui-shadow-sm);
+  }
+
+  .md-elevation-2 {
+    box-shadow: var(--ui-shadow);
+  }
+
+  .md-elevation-3 {
+    box-shadow: var(--ui-shadow-lg);
+  }
 
   /* Tailwind v4 can't @apply custom component classes, so the legacy button
      aliases repeat the .ui-btn declarations. */
   .md-filled-button,
+  .md-filled-button-donate,
   .md-filled-tonal-button,
   .md-outlined-button,
   .md-text-button {
@@ -505,37 +580,66 @@
     transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
     cursor: pointer;
   }
+
   .md-filled-button:hover,
+  .md-filled-button-donate:hover,
   .md-filled-tonal-button:hover,
   .md-outlined-button:hover {
     transform: translate(-1px, -1px);
     box-shadow: var(--ui-shadow);
   }
+
   .md-filled-button:active,
+  .md-filled-button-donate:active,
   .md-filled-tonal-button:active,
   .md-outlined-button:active,
   .md-text-button:active {
     transform: translate(2px, 2px);
     box-shadow: none;
   }
+
   .md-filled-button {
     background-color: var(--color-primary);
     color: var(--color-on-primary);
   }
+
+  .md-filled-button-donate {
+    background-color: rgb(230, 230, 0);
+    color: #000;
+  }
+
+  .md-filled-button-donate:hover {
+    background-color: rgb(255, 255, 86);
+    color: #000;
+  }
+
+  .md-filled-button-donate:active {
+    background-color: rgb(0, 173, 0);
+    color: #000;
+  }
+
+  .md-filled-button-donate:disabled {
+    background-color: grey;
+    color: #000;
+  }
+
   .md-filled-tonal-button {
     background-color: var(--color-primary-container);
     color: var(--color-on-primary-container);
   }
+
   .md-outlined-button {
     background-color: var(--color-surface-container-lowest);
     color: var(--color-on-surface);
   }
+
   .md-text-button {
     background-color: transparent;
     border-color: transparent;
     box-shadow: none;
     color: var(--color-primary);
   }
+
   .md-text-button:hover {
     background-color: var(--color-surface-container-high);
   }
@@ -544,6 +648,7 @@
     background-color: var(--color-surface);
     color: var(--color-on-surface);
   }
+
   .md-surface-variant {
     background-color: var(--color-surface-variant);
     color: var(--color-on-surface-variant);
@@ -559,13 +664,16 @@
     width: 6px;
     height: 6px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-[var(--color-outline-variant)];
     @apply rounded-full;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     @apply bg-[var(--color-outline)];
   }
@@ -574,13 +682,16 @@
     width: 10px;
     height: 10px;
   }
+
   ::-webkit-scrollbar-track {
     @apply bg-[var(--color-surface-container)];
   }
+
   ::-webkit-scrollbar-thumb {
     @apply bg-[var(--color-outline-variant)];
     @apply rounded-full;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-[var(--color-outline)];
   }
@@ -606,7 +717,7 @@
   align-items: start;
 }
 
-.generator-layout > * {
+.generator-layout>* {
   min-width: 0;
   max-width: 100%;
 }
@@ -630,10 +741,12 @@
 .generator-area-builder {
   grid-area: builder;
 }
+
 .generator-area-preview {
   grid-area: preview;
   align-self: stretch;
 }
+
 .generator-area-download {
   grid-area: download;
 }

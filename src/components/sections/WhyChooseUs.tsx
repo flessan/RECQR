@@ -16,7 +16,7 @@ const STEPS = [
     kicker: "Step 02",
     title: "Decode & understand",
     description:
-      "The payload is parsed into a typed result — URL, Wi-Fi, vCard, event, geo — with safety checks on links.",
+      "The payload is parsed into a typed result - URL, Wi-Fi, vCard, event, geo - with safety checks on links.",
   },
   {
     icon: Palette,

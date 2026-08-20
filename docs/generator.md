@@ -2,17 +2,17 @@
 
 The generator builds QR codes in four steps:
 
-1. **Complete the content** — choose a preset and fill in its fields.
-2. **Design your QR code** — colors, size, quiet zone, error correction, and
+1. **Complete the content** - choose a preset and fill in its fields.
+2. **Design your QR code** - colors, size, quiet zone, error correction, and
    module/finder styles.
-3. **Logo / image** — optionally embed a local image in the center.
-4. **Download** — export PNG, SVG, or WebP.
+3. **Logo / image** - optionally embed a local image in the center.
+4. **Download** - export PNG, SVG, or WebP.
 
 ## Content presets
 
 | Preset | Payload |
 | ------ | ------- |
-| Link / Social / App / Image / Video | URL (image and video encode a link to where the media is hosted — QR codes cannot embed binary media) |
+| Link / Social / App / Image / Video | URL (image and video encode a link to where the media is hosted - QR codes cannot embed binary media) |
 | Text | Free-form text |
 | E-mail | `mailto:` with subject/body |
 | Call | `tel:` |
@@ -38,13 +38,13 @@ builder keeps its state on reload.
 - Finder style: square, rounded, leaf.
 - Optional label frame with up to 40 characters of text.
 
-Only controls that actually affect the rendered output are exposed — the
+Only controls that actually affect the rendered output are exposed - the
 renderer draws modules directly instead of rasterizing a DOM screenshot.
 
 ## Logo / image
 
 - Upload any image from your device. It is loaded into an object URL,
-  downscaled on a canvas, and composited into the QR — entirely in memory.
+  downscaled on a canvas, and composited into the QR - entirely in memory.
 - Adjust the logo size (12–30% of the QR), padding, background color, and
   whether the background is rounded.
 - When a logo is present, error correction is forced to **H** so the code
@@ -56,9 +56,9 @@ renderer draws modules directly instead of rasterizing a DOM screenshot.
 
 ## Export
 
-- **PNG** — rendered to an offscreen canvas at 2× for crisp output.
-- **SVG** — vector output; the logo is embedded as a base64 image.
-- **WebP** — smaller raster format where the browser supports it (falls back
+- **PNG** - rendered to an offscreen canvas at 2× for crisp output.
+- **SVG** - vector output; the logo is embedded as a base64 image.
+- **WebP** - smaller raster format where the browser supports it (falls back
   to PNG otherwise).
 
 Filenames use the `recqr-qr` prefix (e.g. `recqr-qr.png`, `recqr-qr.svg`).
@@ -67,12 +67,12 @@ Filenames use the `recqr-qr` prefix (e.g. `recqr-qr.png`, `recqr-qr.svg`).
 
 The UI is built on a small token + component layer in `src/app/globals.css`:
 
-- **Palette** — indigo primary, cyan secondary, lemon tertiary, with full light
+- **Palette** - indigo primary, cyan secondary, lemon tertiary, with full light
   and dark ramps exposed as `--color-*` variables.
-- **Shape/shadow** — `--md-radius-*` and `--ui-shadow*` (hard offset shadows).
+- **Shape/shadow** - `--md-radius-*` and `--ui-shadow*` (hard offset shadows).
   These deliberately live *outside* `@theme`, because Tailwind v4 maps `@theme`
   keys onto its own scales (`--spacing-md` once rewrote `max-w-md` to 16px).
-- **Components** — `.ui-card`, `.ui-btn` (+ `-primary/-tonal/-surface/-danger/
+- **Components** - `.ui-card`, `.ui-btn` (+ `-primary/-tonal/-surface/-danger/
   -ghost`, `-sm/-lg`), `.ui-icon-btn`, `.ui-chip` (+ `.is-active`),
   `.ui-segment`, `.ui-field`, `.ui-label`, `.ui-badge`, `.ui-step`,
   `.ui-display`, `.ui-underline`, `.ui-dotgrid`.
@@ -138,10 +138,10 @@ and decodes it with jsQR (`src/lib/qr/decode.test.ts`).
 
 The generator is split into small components rather than one monolith:
 
-- `ContentSelector` — preset tabs and per-preset fields.
-- `DesignEditor` — colors, size, error correction, styles.
-- `LogoUploader` — local image handling.
-- `QRPreview` — live SVG preview (same renderer output as the download).
-- `DownloadControls` — format selection and download.
-- `useGeneratorState` — content/design/logo/output state with persistence.
-- `useQRBitmap` — builds the matrix and loaded logo.
+- `ContentSelector` - preset tabs and per-preset fields.
+- `DesignEditor` - colors, size, error correction, styles.
+- `LogoUploader` - local image handling.
+- `QRPreview` - live SVG preview (same renderer output as the download).
+- `DownloadControls` - format selection and download.
+- `useGeneratorState` - content/design/logo/output state with persistence.
+- `useQRBitmap` - builds the matrix and loaded logo.

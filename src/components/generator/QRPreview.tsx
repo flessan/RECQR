@@ -55,7 +55,7 @@ export default function QRPreview({ bitmap, design, logo, hint }: Props) {
       {logo.src && logo.sizeRatio > 0.25 && (
         <div className="ui-card-flat ui-card-tertiary flex items-center gap-2 px-3 py-2 text-xs font-bold">
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          <span>Large logo — verify scannability on a real device.</span>
+          <span>Large logo - verify scannability on a real device.</span>
         </div>
       )}
     </div>

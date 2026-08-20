@@ -7,7 +7,7 @@ Pages without any server runtime.
 
 `next.config.ts` sets `basePath` and `assetPrefix` based on the repository name:
 
-- In **development** (`npm run dev`) there is no base path — links are `/scanner`.
+- In **development** (`npm run dev`) there is no base path - links are `/scanner`.
 - In **production**, when a repo name is detected, assets are served from
   `/<repo>/` (for example `/RECQR/_next/...`).
 

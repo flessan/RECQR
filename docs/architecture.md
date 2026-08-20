@@ -8,36 +8,36 @@ CSS v4, and the Material Design 3 theme tokens in `src/app/globals.css`.
 These modules are framework-agnostic (no React) so they can be unit-tested and
 reused:
 
-- **`types.ts`** — shared types: `QRResult`, parsed payloads, generator state.
-- **`parser.ts`** — `detectQRType`, `parseQR`, and per-format parsers. Handles
+- **`types.ts`** - shared types: `QRResult`, parsed payloads, generator state.
+- **`parser.ts`** - `detectQRType`, `parseQR`, and per-format parsers. Handles
   Wi-Fi escaping, vCard line unfolding and parameters, and VEVENT dates.
-- **`encoder.ts`** — `buildPayload` turns a generator preset + fields into the
+- **`encoder.ts`** - `buildPayload` turns a generator preset + fields into the
   exact QR string. This keeps scanner and generator using the same format rules.
-- **`security.ts`** — URL analysis: protocol allow-list and suspicious-URL
+- **`security.ts`** - URL analysis: protocol allow-list and suspicious-URL
   warnings.
-- **`imageDecoder.ts`** — one pipeline for File, Blob, data/object URL, image,
+- **`imageDecoder.ts`** - one pipeline for File, Blob, data/object URL, image,
   canvas, and ImageData inputs. Downscales, tries multiple scales/crops, and
   contrast-enhances before calling jsQR.
-- **`layout.ts`** — the single QR coordinate system (`QRLayout`): module size,
+- **`layout.ts`** - the single QR coordinate system (`QRLayout`): module size,
   quiet zone, offsets, output width/height, finder origins, structural-module
   detection, and logo box geometry.
-- **`scene.ts`** — `buildScene()` turns a matrix + design into a renderer-
+- **`scene.ts`** - `buildScene()` turns a matrix + design into a renderer-
   agnostic list of primitive shapes expressed in `QRLayout` coordinates, plus
   `shapeBounds`/`sceneBounds` used by the bounds tests.
-- **`renderer.ts`** — uses the `qrcode` package for the matrix, then serialises
+- **`renderer.ts`** - uses the `qrcode` package for the matrix, then serialises
   the same scene to an SVG string (`sceneToSvg`) or paints it to a 2D canvas
   (`paintScene`/`renderToCanvas`). Preview, PNG, WebP and SVG therefore share
   identical geometry by construction.
 
 ## React layer
 
-- **`hooks/useCameraScanner.ts`** — owns the `MediaStream` lifecycle, throttled
+- **`hooks/useCameraScanner.ts`** - owns the `MediaStream` lifecycle, throttled
   RAF decode loop with dynamic-imported jsQR, torch/zoom capabilities, sound,
   haptics, duplicate detection, and cleanup.
-- **`hooks/useGeneratorState.ts`** — content/design/logo/output state with
+- **`hooks/useGeneratorState.ts`** - content/design/logo/output state with
   `localStorage` persistence; forces error-correction H when a logo is added.
-- **`hooks/useQRBitmap.ts`** — memoized matrix plus async-loaded logo bitmap.
-- **`store/scanHistory.ts`** — Zustand store persisted to `localStorage` with a
+- **`hooks/useQRBitmap.ts`** - memoized matrix plus async-loaded logo bitmap.
+- **`store/scanHistory.ts`** - Zustand store persisted to `localStorage` with a
   200-item cap and favorites.
 
 ### Scanner components

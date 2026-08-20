@@ -87,14 +87,14 @@ export default function QRGenerator() {
             <div className="ui-card-flat min-w-0 p-3">
               <div className="ui-label">Payload</div>
               <code className="block text-xs text-[var(--color-on-surface)] break-all whitespace-pre-wrap max-h-24 overflow-y-auto custom-scrollbar">
-                {hasContent ? payload : <span className="opacity-60">—</span>}
+                {hasContent ? payload : <span className="opacity-60">-</span>}
               </code>
             </div>
             <p className="flex items-start gap-2 text-xs font-semibold leading-relaxed text-[var(--color-on-surface-variant)]">
               <ShieldCheck className="mt-0.5 h-4 w-4 flex-none text-[var(--color-primary)]" />
               <span>
                 <strong className="text-[var(--color-on-surface)]">Private by design:</strong>{" "}
-                generation and logo compositing run entirely on your device — nothing
+                generation and logo compositing run entirely on your device - nothing
                 is uploaded.
               </span>
             </p>

@@ -29,7 +29,7 @@ export default function ApiPage() {
               Optional Edge API
             </h1>
             <p className="text-lg text-[var(--color-on-surface-variant)] max-w-2xl mx-auto">
-              The RECQR web app needs <strong>no backend</strong> — scanning,
+              The RECQR web app needs <strong>no backend</strong> - scanning,
               image decoding, and QR generation all run in the browser. The
               Cloudflare Worker in <code>worker/</code> is an optional,
               standalone endpoint for generating QR SVGs over HTTP.
@@ -59,11 +59,11 @@ export default function ApiPage() {
               <div>
                 <h3 className="text-sm font-semibold text-[var(--color-on-surface)] mb-2">Query parameters</h3>
                 <ul className="text-sm text-[var(--color-on-surface-variant)] space-y-1">
-                  <li><code className="text-[var(--color-primary)]">text</code> — content to encode (required)</li>
-                  <li><code className="text-[var(--color-primary)]">margin</code> — quiet-zone modules (default 2)</li>
-                  <li><code className="text-[var(--color-primary)]">fg</code> — foreground color (default #000000)</li>
-                  <li><code className="text-[var(--color-primary)]">bg</code> — background color (default #ffffff)</li>
-                  <li><code className="text-[var(--color-primary)]">format</code> — <code>svg</code> (default) or <code>json</code></li>
+                  <li><code className="text-[var(--color-primary)]">text</code> - content to encode (required)</li>
+                  <li><code className="text-[var(--color-primary)]">margin</code> - quiet-zone modules (default 2)</li>
+                  <li><code className="text-[var(--color-primary)]">fg</code> - foreground color (default #000000)</li>
+                  <li><code className="text-[var(--color-primary)]">bg</code> - background color (default #ffffff)</li>
+                  <li><code className="text-[var(--color-primary)]">format</code> - <code>svg</code> (default) or <code>json</code></li>
                 </ul>
               </div>
               <div className="bg-[var(--color-surface-container-low)] rounded-xl overflow-hidden">
@@ -80,7 +80,7 @@ export default function ApiPage() {
           <div className="mt-8 p-5 rounded-2xl bg-[var(--color-surface-container)] border border-[var(--color-outline-variant)] text-sm text-[var(--color-on-surface-variant)]">
             <strong className="text-[var(--color-on-surface)]">Note:</strong> There
             is no server-side QR <em>decoding</em> endpoint. Decoding camera
-            frames and uploaded images always happens locally with jsQR — by
+            frames and uploaded images always happens locally with jsQR - by
             design, because sending those to a server would violate RECQR&apos;s
             privacy model. Official SDKs, dynamic QR codes, analytics, and
             webhooks are not implemented.

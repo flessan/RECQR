@@ -114,7 +114,7 @@ export default function DonatePage() {
                 <p className="text-[var(--color-on-surface-variant)] mb-6">
                   {option.description}
                 </p>
-                <button onClick={() => window.open("https://tako.id/fLeSs/gift", "_blank")} className="md-filled-button w-full">Donate Now</button>
+                <button onClick={() => window.open("https://sociabuzz.com/flessan/tribe", "_blank")} className="md-filled-button w-full">Donate Now</button>
               </motion.div>
             ))}
           </div>
@@ -132,7 +132,7 @@ export default function DonatePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { name: "Tako.id", description: "Indonesian payment gateway", href: "https://tako.id/fLeSs/gift" },
-                { name: "Buy Me a Coffee", description: "Support with a virtual coffee", href: "https://buymeacoffee.com/flessan" },
+                { name: "SociaBuzz", description: "Support with your name there!", href: "https://sociabuzz.com/flessan/tribe" },
                 { name: "GitHub Sponsors", description: "Support via GitHub", href: "https://github.com/sponsors/flessan" },
                 { name: "Open Collective", description: "Transparent funding", href: "https://opencollective.com/thio-saputra" },
               ].map((method) => (

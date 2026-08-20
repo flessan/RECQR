@@ -16,11 +16,11 @@ CSS v4, and a Material Design 3 theme. Hosted on GitHub Pages.
   decode loop are separate; frames are downscaled).
 - **Rear/front camera switching**, plus **torch** and **zoom** when the device
   supports them.
-- **Proper camera lifecycle** — streams are stopped on success, unmount, tab
+- **Proper camera lifecycle** - streams are stopped on success, unmount, tab
   hidden, and device removal.
 - **Sound and haptic feedback** (progressive enhancement).
 - **Image scanning** via file upload, **drag & drop**, and **Ctrl/⌘+V paste**
-  — all through one local decode pipeline with multi-scale/crop/contrast
+  - all through one local decode pipeline with multi-scale/crop/contrast
   preprocessing.
 - **Duplicate detection** and a manual **scan again** action.
 - **Clear error states** for denied permission, no camera, and busy camera.
@@ -52,7 +52,7 @@ A step-based builder (Content → Design → Logo → Download):
   where the media is hosted).
 - Colors, transparent background, size, quiet zone, error correction (L–H),
   dot/module styles, finder styles, and an optional label frame.
-- **Browser-only logo/image embedding** — preview, resize, padding, and rounded
+- **Browser-only logo/image embedding** - preview, resize, padding, and rounded
   background; error correction is forced to H and oversized logos warn you.
 - **PNG, SVG, and WebP** download with meaningful filenames (`recqr-qr.*`).
 - Settings persist in `localStorage`.
@@ -83,7 +83,7 @@ npm run build    # static export into ./out
 ```
 
 Browser-level checks (require a running `npm run dev`, a one-off
-`npm i --no-save playwright esbuild`, and a Chromium binary — set
+`npm i --no-save playwright esbuild`, and a Chromium binary - set
 `CHROMIUM_PATH` to use one you already have):
 
 ```bash
@@ -102,7 +102,7 @@ repository name. See [`docs/github-pages.md`](docs/github-pages.md).
 ## Optional Cloudflare Worker
 
 `worker/` contains an **optional** Hono Worker that generates QR SVGs over
-HTTP. The web app does not use it — scanning and generation are 100%
+HTTP. The web app does not use it - scanning and generation are 100%
 client-side. There is no server-side decode endpoint by design. See
 [`docs/api.md`](docs/api.md).
 
@@ -138,4 +138,4 @@ the privacy-first web app.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).

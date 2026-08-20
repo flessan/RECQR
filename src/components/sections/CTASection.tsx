@@ -21,7 +21,7 @@ export default function CTASection() {
             Your codes. Your device. Your rules.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-base font-semibold text-[var(--color-on-primary)] opacity-90 sm:text-lg">
-            Open the scanner or build a custom QR code right now — no sign-up,
+            Open the scanner or build a custom QR code right now - no sign-up,
             no upload, no waiting.
           </p>
 

@@ -57,7 +57,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-[var(--color-on-surface-variant)] mb-4">
-              A privacy-first QR scanner and generator. Everything runs in your browser — no uploads, no tracking, no backend.
+              A privacy-first QR scanner and generator. Everything runs in your browser - no uploads, no tracking, no backend.
             </p>
             <div className="flex space-x-2">
               <a
@@ -104,7 +104,7 @@ export default function Footer() {
               © {currentYear} RECQR. All rights reserved.
             </p>
             <div className="flex items-center space-x-4 text-sm text-[var(--color-on-surface-variant)]">
-              <span>Version 1.5.0</span>
+              <span>Version 1.5.5 Reimagined</span>
               <span>•</span>
               <Link href="https://www.termsfeed.com/live/3077ef18-a403-4631-a676-5707224e959b" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)]">
                 Privacy

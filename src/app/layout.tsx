@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | RECQR",
   },
   description:
-    "Scan QR codes with your camera or images and generate custom QR codes — entirely in your browser. No backend, no tracking, no uploads.",
+    "Scan QR codes with your camera or images and generate custom QR codes - entirely in your browser. No backend, no tracking, no uploads.",
   keywords: ["QR code", "scanner", "generator", "privacy", "offline", "React", "Next.js"],
   applicationName: "RECQR",
   authors: [{ name: "Flessan" }],
@@ -37,13 +37,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "RECQR",
-    title: "RECQR — Privacy-first QR Scanner & Generator",
+    title: "RECQR - Privacy-first QR Scanner & Generator",
     description: "Scan and generate QR codes entirely in your browser. No backend, no tracking, no uploads.",
     url: "https://flessan.github.io/RECQR",
   },
   twitter: {
     card: "summary_large_image",
-    title: "RECQR — Privacy-first QR Scanner & Generator",
+    title: "RECQR - Privacy-first QR Scanner & Generator",
     description: "Scan and generate QR codes entirely in your browser. No backend, no tracking, no uploads.",
   },
 };

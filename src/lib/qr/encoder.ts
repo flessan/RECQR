@@ -15,7 +15,7 @@ function clean(value: string | undefined): string {
 /**
  * Build the actual QR payload string for the active content preset.
  * Image/Video/Social/App/deep-link all produce a URL payload (QR codes cannot
- * embed binary media — they link to where the media is hosted).
+ * embed binary media - they link to where the media is hosted).
  */
 export function buildPayload(content: GeneratorContent): string {
   const { preset, data } = content;
@@ -125,7 +125,7 @@ export function formatICalDate(value: string): string {
 
 /**
  * Required field(s) per preset. A payload is only meaningful once these are
- * filled in — otherwise `buildPayload` produces placeholders such as `tel:`,
+ * filled in - otherwise `buildPayload` produces placeholders such as `tel:`,
  * `geo:,` or an empty-SSID Wi-Fi string, which encode into a QR nobody can use.
  */
 const REQUIRED_FIELDS: Record<ContentPreset, string[]> = {

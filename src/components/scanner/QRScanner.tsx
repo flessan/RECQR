@@ -50,7 +50,7 @@ export default function QRScanner() {
           Scanner
         </span>
         <h1 className="ui-display mt-4 max-w-3xl text-[clamp(2rem,5vw,3.25rem)] text-[var(--color-on-surface)]">
-          Point, drop or paste —{" "}
+          Point, drop or paste ——{" "}
           <span className="ui-underline whitespace-nowrap">we decode it</span>
         </h1>
         <p className="mt-3 max-w-2xl text-base font-medium text-[var(--color-on-surface-variant)] sm:text-lg">

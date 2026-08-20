@@ -1,7 +1,7 @@
 # Scanner
 
 The scanner can read QR codes from a live camera feed or from an image.
-Everything runs locally — the camera stream and any image you provide are
+Everything runs locally - the camera stream and any image you provide are
 processed in your browser and are never uploaded.
 
 ## Real-time camera scanning
@@ -19,12 +19,12 @@ mobile devices while still detecting codes quickly.
 
 ### Camera controls
 
-- **Switch camera** — toggle between the rear and front camera (only shown when
+- **Switch camera** - toggle between the rear and front camera (only shown when
   more than one camera is available).
-- **Torch** — toggle the flash when the device/browser exposes
+- **Torch** - toggle the flash when the device/browser exposes
   `MediaTrackCapabilities.torch`.
-- **Zoom** — slider shown when `MediaTrackCapabilities.zoom` is available.
-- **Beep / vibration** — optional audio and haptic feedback on a successful
+- **Zoom** - slider shown when `MediaTrackCapabilities.zoom` is available.
+- **Beep / vibration** - optional audio and haptic feedback on a successful
   scan (vibration requires the Vibration API).
 
 These controls degrade gracefully: if a feature isn't supported by the browser
@@ -34,9 +34,9 @@ or device, the corresponding button simply isn't shown.
 
 Three input methods share one decoder pipeline (`src/lib/qr/imageDecoder.ts`):
 
-- **Choose image** — select a file from disk.
-- **Drag & drop** — drop an image anywhere on the drop zone.
-- **Paste** — press `Ctrl/⌘ + V`, or use the **Paste** button to read an image
+- **Choose image** - select a file from disk.
+- **Drag & drop** - drop an image anywhere on the drop zone.
+- **Paste** - press `Ctrl/⌘ + V`, or use the **Paste** button to read an image
   from the clipboard.
 
 The decoder automatically:

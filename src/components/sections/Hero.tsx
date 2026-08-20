@@ -59,7 +59,7 @@ export default function Hero() {
             className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-[var(--color-on-surface-variant)] sm:text-xl"
           >
             A QR scanner and generator that never phones home. Camera frames,
-            images and logos are processed on your device — and nowhere else.
+            images and logos are processed on your device - and nowhere else.
           </motion.p>
 
           <motion.div
@@ -195,9 +195,8 @@ function HeroQr() {
         row.split("").map((c, x) => (
           <span
             key={`${x}-${y}`}
-            className={`aspect-square rounded-[2px] ${
-              c === "1" ? "bg-[var(--color-on-surface)]" : "bg-transparent"
-            }`}
+            className={`aspect-square rounded-[2px] ${c === "1" ? "bg-[var(--color-on-surface)]" : "bg-transparent"
+              }`}
           />
         ))
       )}

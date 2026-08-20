@@ -69,7 +69,7 @@ const PAYLOADS: Array<[string, string]> = [
     "vcard",
     "BEGIN:VCARD\nVERSION:3.0\nN:Doe;Jane;;;\nFN:Jane Doe\nORG:RECQR Labs\nTITLE:Engineer\nTEL;TYPE=CELL:+15551234567\nEMAIL:jane@recqr.example\nURL:https://recqr.example\nEND:VCARD",
   ],
-  ["unicode", "こんにちは世界 — Grüße, Ωμέγα ✅ 你好"],
+  ["unicode", "こんにちは世界 - Grüße, Ωμέγα ✅ 你好"],
 ];
 
 describe("QR decode round-trip (SVG -> pixels -> jsQR)", () => {
@@ -140,7 +140,7 @@ describe("QR decode round-trip (SVG -> pixels -> jsQR)", () => {
 });
 
 describe("QR decode round-trip with an embedded logo", () => {
-  // 1x1 red PNG scaled up by the renderer — enough to occlude the centre.
+  // 1x1 red PNG scaled up by the renderer - enough to occlude the centre.
   const RED_PNG =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
 
