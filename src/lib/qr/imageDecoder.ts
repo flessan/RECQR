@@ -220,6 +220,12 @@ async function toDrawable(source: ImageSource): Promise<Drawable> {
   }
 
   if (typeof Blob !== "undefined" && source instanceof Blob) {
+    // Reject known non-image MIME types before asking browser decoders to open them.
+    // Some browser test environments do not settle createImageBitmap for text blobs.
+    if (source.type && !source.type.toLowerCase().startsWith("image/")) {
+      throw new Error("Source is not an image");
+    }
+
     // ImageBitmap avoids an object-URL decode round trip on modern browsers.
     if (typeof createImageBitmap === "function") {
       try {
