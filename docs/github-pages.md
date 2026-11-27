@@ -57,5 +57,6 @@ npx serve out
 ## Notes
 
 - The favicon is an inline SVG data URI, so it works regardless of base path.
+- The install manifest and app icons use the detected repository base path, so they work on GitHub Pages project sites as well as root deployments.
 - There are no API routes in the static export; all QR logic is client-side.
 - The Cloudflare Worker in `worker/` is optional and deployed separately.

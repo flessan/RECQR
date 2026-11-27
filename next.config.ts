@@ -18,7 +18,11 @@ const nextConfig: NextConfig = {
   assetPrefix: shouldUseBasePath ? `/${repo}/` : undefined,
   images: {
     unoptimized: true,
-  }
+  },
+  // Keep public PWA asset URLs aligned with the static-export base path.
+  env: {
+    NEXT_PUBLIC_BASE_PATH: shouldUseBasePath ? `/${repo}` : "",
+  },
 };
 
 export default nextConfig;

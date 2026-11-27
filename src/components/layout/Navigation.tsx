@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Moon, QrCode, Sun, X } from "lucide-react";
+import { Download, Menu, Moon, QrCode, Sun, X } from "lucide-react";
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+}
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -19,6 +24,7 @@ export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -27,6 +33,35 @@ export default function Navigation() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Capture the browser-native install prompt only when this browser supports it.
+  useEffect(() => {
+    const onBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+    };
+    const onAppInstalled = () => setInstallPrompt(null);
+
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    window.addEventListener("appinstalled", onAppInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", onAppInstalled);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    const prompt = installPrompt;
+    if (!prompt) return;
+    try {
+      await prompt.prompt();
+      await prompt.userChoice;
+    } catch {
+      // The browser may reject a prompt after its installability state changes.
+    } finally {
+      setInstallPrompt(null);
+    }
+  };
 
   // Read the initial theme from the DOM set by the no-flash inline script.
   useEffect(() => {
@@ -95,6 +130,17 @@ export default function Navigation() {
         </div>
 
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          {installPrompt && (
+            <button
+              type="button"
+              onClick={() => void handleInstall()}
+              aria-label="Install RECQR"
+              title="Install RECQR"
+              className="ui-icon-btn h-10 w-10"
+            >
+              <Download className="h-5 w-5" />
+            </button>
+          )}
           <button
             type="button"
             onClick={toggleTheme}

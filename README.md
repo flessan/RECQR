@@ -57,6 +57,12 @@ A step-based builder (Content → Design → Logo → Download):
 - **PNG, SVG, and WebP** download with meaningful filenames (`recqr-qr.*`).
 - Settings persist in `localStorage`.
 
+### Install as an app
+
+RECQR includes a web app manifest and home-screen icons. Compatible browsers can offer an **Install RECQR** action in the navigation when their native install prompt is available. On iPhone or iPad, open RECQR in Safari, tap **Share**, then choose **Add to Home Screen**.
+
+This release adds installation metadata only; it does not yet include a service worker or promise offline availability.
+
 ## Tech stack
 
 - [Next.js](https://nextjs.org/) (App Router, `output: "export"`)
