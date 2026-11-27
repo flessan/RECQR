@@ -105,7 +105,7 @@ export default function QRGenerator() {
               bitmap={hasContent ? bitmap : null}
               design={state.design}
               logo={state.logo}
-              hint={contentHint}
+              hint={state.logo.src && !bitmap ? "Preparing your logo…" : contentHint}
             />
 
             <div className="border-t border-[var(--color-outline-variant)] pt-5">

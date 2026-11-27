@@ -262,10 +262,19 @@ async function toDrawable(source: ImageSource): Promise<Drawable> {
     };
   }
   if (typeof ImageData !== "undefined" && source instanceof ImageData) {
+    const stagingCanvas = document.createElement("canvas");
+    stagingCanvas.width = source.width;
+    stagingCanvas.height = source.height;
+    const stagingContext = stagingCanvas.getContext("2d");
+    if (!stagingContext) {
+      return { width: 0, height: 0, draw: () => undefined };
+    }
+    stagingContext.putImageData(source, 0, 0);
     return {
       width: source.width,
       height: source.height,
-      draw: (context) => context.putImageData(source, 0, 0),
+      draw: (context, width, height) =>
+        context.drawImage(stagingCanvas, 0, 0, width, height),
     };
   }
 
