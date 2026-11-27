@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { buildBitmap, type QRBitmap } from "@/lib/qr/renderer";
-import { generateMatrix } from "@/lib/qr/renderer";
+import { buildBitmap, generateMatrix, type QRBitmap } from "@/lib/qr/renderer";
 import type { LoadedLogo } from "@/lib/qr/scene";
 import type { GeneratorDesign, LogoSettings } from "@/lib/qr/types";
 
 /**
- * Builds the QR bitmap. The matrix is computed synchronously with useMemo; the
- * logo is decoded/downscaled asynchronously because it needs an <img> decode.
+ * Matrix generation stays synchronous for an immediate preview. Embedded
+ * logos are decoded asynchronously and are cleared whenever the payload or
+ * logo settings change so exports can never use a stale image.
  */
 export function useQRBitmap(
   payload: string,
@@ -23,23 +23,32 @@ export function useQRBitmap(
   const [loadedLogo, setLoadedLogo] = useState<LoadedLogo | null>(null);
 
   useEffect(() => {
-    if (!logo.src) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLoadedLogo(null);
-      return;
-    }
     let cancelled = false;
-    void buildBitmap(payload, design, logo).then((b) => {
-      if (cancelled || !b.logo) return;
-      setLoadedLogo(b.logo);
-    });
+
+    // Never leave the previous logo attached to a newly generated payload.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoadedLogo(null);
+
+    if (!logo.src) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    void buildBitmap(payload, design, logo)
+      .then((bitmap) => {
+        if (!cancelled) setLoadedLogo(bitmap.logo);
+      })
+      .catch(() => {
+        if (!cancelled) setLoadedLogo(null);
+      });
+
     return () => {
       cancelled = true;
     };
-    // We intentionally key off the primitive fields that affect the bitmap so
-    // that object identity changes in `design`/`logo` don't cause reloads.
+    // Key off only the primitive settings that affect the embedded bitmap.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [logo.src, logo.sizeRatio, design.size, matrix.size, payload]);
+  }, [logo.src, logo.sizeRatio, logo.padding, logo.background, logo.roundedBg, design.size, matrix.size, payload]);
 
   return useMemo(
     () => ({

@@ -74,6 +74,13 @@ function loadInitial(): GeneratorState {
 export function useGeneratorState() {
   const [state, setState] = useState<GeneratorState>(loadInitial);
 
+  // Revoke temporary logo URLs when a logo is replaced or the generator unmounts.
+  useEffect(() => {
+    const objectUrl = state.logo.src;
+    if (!objectUrl) return;
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [state.logo.src]);
+
   useEffect(() => {
     try {
       const toStore = {
@@ -117,7 +124,6 @@ export function useGeneratorState() {
     setState((s) => ({ ...s, output: { ...s.output, ...patch } }));
 
   const resetLogo = () => {
-    if (state.logo.src) URL.revokeObjectURL(state.logo.src);
     setState((s) => ({ ...s, logo: DEFAULT_LOGO }));
   };
 

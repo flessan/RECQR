@@ -699,8 +699,8 @@
 
 /* --------------------------- Generator layout -----------------------------
  * Responsive two-column builder.
- *   mobile / small tablet : single column, Content > Design > Preview > Download
- *   >= 1024px             : controls | preview, both columns allowed to shrink
+ *   mobile / small tablet : content first, then preview and download
+ *   >= 1024px             : content | sticky preview + download
  * Every track uses minmax(0, ...) so no child can force the page wider than
  * the viewport (no overflow-x: hidden band-aids anywhere).
  */
@@ -711,8 +711,7 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     "builder"
-    "preview"
-    "download";
+    "preview";
   gap: 1rem;
   align-items: start;
 }
@@ -732,8 +731,7 @@
   .generator-layout {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     grid-template-areas:
-      "builder preview"
-      "download preview";
+      "builder preview";
     gap: 1.5rem;
   }
 }
@@ -745,10 +743,6 @@
 .generator-area-preview {
   grid-area: preview;
   align-self: stretch;
-}
-
-.generator-area-download {
-  grid-area: download;
 }
 
 /* The QR SVG carries intrinsic width/height (needed for a correct download),

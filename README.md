@@ -12,16 +12,16 @@ CSS v4, and a Material Design 3 theme. Hosted on GitHub Pages.
 
 ### Scanner
 
-- **Real-time camera scanning** with throttled, low-CPU decoding (preview and
-  decode loop are separate; frames are downscaled).
-- **Rear/front camera switching**, plus **torch** and **zoom** when the device
-  supports them.
+- **Screenshot-first scanning** - paste a copied screenshot with Ctrl/⌘+V,
+  choose an image, paste from the clipboard, or drag and drop a file.
+- **Optional live camera scanning** with rear/front switching, torch, and zoom
+  when the browser and device support them.
 - **Proper camera lifecycle** - streams are stopped on success, unmount, tab
   hidden, and device removal.
 - **Sound and haptic feedback** (progressive enhancement).
-- **Image scanning** via file upload, **drag & drop**, and **Ctrl/⌘+V paste**
-  - all through one local decode pipeline with multi-scale/crop/contrast
-  preprocessing.
+- **Resilient local image decoding** with native QR detection where available,
+  jsQR fallback, scale/crop recovery, inversion handling, and contrast recovery.
+- Ordinary text pastes are left alone; only image clipboard data is intercepted.
 - **Duplicate detection** and a manual **scan again** action.
 - **Clear error states** for denied permission, no camera, and busy camera.
 
@@ -30,8 +30,8 @@ CSS v4, and a Material Design 3 theme. Hosted on GitHub Pages.
 Parses and shows tailored actions for: URLs, text, email, phone, SMS,
 WhatsApp, Wi-Fi, vCard, calendar events, and geo coordinates.
 
-- URLs show the **hostname first**, warn on suspicious links, and are **never
-  opened automatically**; `javascript:`/`data:`/`file:` are blocked.
+- URLs show the **full destination clearly**, warn about suspicious patterns,
+  and are **never opened automatically**. Unsafe URI schemes are blocked.
 - Wi-Fi shows SSID/security with reveal/hide password and copy.
 - vCard downloads `.vcf`; events download `.ics`.
 - Geo opens in maps; text downloads `.txt`.
@@ -45,16 +45,20 @@ WhatsApp, Wi-Fi, vCard, calendar events, and geo coordinates.
 
 ### Generator
 
-A step-based builder (Content → Design → Logo → Download):
+A fast, live-preview builder with optional advanced design controls:
 
-- Presets for link, text, e-mail, call, SMS, WhatsApp, Wi-Fi, vCard, event,
-  geo, social, app/deep link, image, and video (media presets encode a link to
-  where the media is hosted).
+- Popular presets up front: link, text, Wi-Fi, and contact. Other types stay
+  available under **More types**. Media presets encode a link to where the media
+  is hosted, not the binary media itself.
+- Plain-language validation for URLs, e-mail, phone numbers, Wi-Fi passwords,
+  and geographic coordinates. Invalid or incomplete content cannot be exported.
 - Colors, transparent background, size, quiet zone, error correction (L–H),
   dot/module styles, finder styles, and an optional label frame.
-- **Browser-only logo/image embedding** - preview, resize, padding, and rounded
-  background; error correction is forced to H and oversized logos warn you.
-- **PNG, SVG, and WebP** download with meaningful filenames (`recqr-qr.*`).
+- Optional logo embedding with file-size checks, image validation, resize,
+  padding, background controls, and high error correction. Large logos warn
+  users before export.
+- Reliable PNG, SVG, and WebP downloads with explicit failure states and a PNG
+  fallback when WebP encoding is unavailable.
 - Settings persist in `localStorage`.
 
 ### Install as an app
@@ -85,6 +89,7 @@ npm run dev      # http://localhost:3000
 ```bash
 npm run lint
 npm test         # unit tests + SVG->pixels->jsQR decode round-trips (resvg)
+npm run test:pwa # PWA manifest and icon validation
 npm run build    # static export into ./out
 ```
 

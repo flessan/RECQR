@@ -80,7 +80,7 @@ describe("hasRequiredContent", () => {
     ["sms", { number: "" }, false],
     ["whatsapp", { number: "" }, false],
     ["wifi", { ssid: "", password: "x" }, false],
-    ["wifi", { ssid: "Net" }, true],
+    ["wifi", { ssid: "Net", encryption: "nopass" }, true],
     ["vcard", { firstName: "", lastName: "", formattedName: "" }, false],
     ["vcard", { lastName: "Doe" }, true],
     ["event", { summary: "" }, false],
@@ -98,8 +98,27 @@ describe("hasRequiredContent", () => {
     });
   }
 
-  it("returns a hint only while content is incomplete", () => {
-    expect(missingContentHint({ preset: "wifi", data: { ssid: "" } })).toMatch(/SSID/);
-    expect(missingContentHint({ preset: "wifi", data: { ssid: "Net" } })).toBeNull();
+  it("validates URLs, email addresses, phone numbers, and coordinates", () => {
+    expect(hasRequiredContent(c("link", { url: "example.com" }))).toBe(true);
+    expect(hasRequiredContent(c("link", { url: "not a url" }))).toBe(false);
+    expect(hasRequiredContent(c("email", { to: "not-an-email" }))).toBe(false);
+    expect(hasRequiredContent(c("whatsapp", { number: "123" }))).toBe(false);
+    expect(hasRequiredContent(c("geo", { latitude: "91", longitude: "0" }))).toBe(false);
+    expect(hasRequiredContent(c("geo", { latitude: "-6.2", longitude: "114.8" }))).toBe(true);
+  });
+
+  it("requires a Wi-Fi password unless the network is open", () => {
+    expect(hasRequiredContent(c("wifi", { ssid: "Guest", encryption: "WPA" }))).toBe(false);
+    expect(hasRequiredContent(c("wifi", { ssid: "Guest", encryption: "nopass" }))).toBe(true);
+  });
+
+  it("blocks unsafe custom app links in the generator", () => {
+    expect(hasRequiredContent(c("app", { url: "myapp://open" }))).toBe(true);
+    expect(hasRequiredContent(c("app", { url: "javascript:alert(1)" }))).toBe(false);
+  });
+
+  it("returns a plain-language hint only while content is incomplete", () => {
+    expect(missingContentHint({ preset: "wifi", data: { ssid: "" } })).toMatch(/network name/i);
+    expect(missingContentHint({ preset: "wifi", data: { ssid: "Net", encryption: "nopass" } })).toBeNull();
   });
 });

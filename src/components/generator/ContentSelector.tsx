@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   AppWindow,
   CalendarPlus,
@@ -33,7 +35,7 @@ const PRESETS: Array<{ id: ContentPreset; label: string; icon: React.ReactNode }
   { id: "sms", label: "SMS", icon: <MessageSquare className="w-4 h-4" /> },
   { id: "whatsapp", label: "WhatsApp", icon: <Share2 className="w-4 h-4" /> },
   { id: "wifi", label: "Wi-Fi", icon: <Wifi className="w-4 h-4" /> },
-  { id: "vcard", label: "vCard", icon: <UserPlus className="w-4 h-4" /> },
+  { id: "vcard", label: "Contact", icon: <UserPlus className="w-4 h-4" /> },
   { id: "event", label: "Event", icon: <CalendarPlus className="w-4 h-4" /> },
   { id: "geo", label: "Geo", icon: <MapPin className="w-4 h-4" /> },
   { id: "social", label: "Social", icon: <Globe className="w-4 h-4" /> },
@@ -42,35 +44,77 @@ const PRESETS: Array<{ id: ContentPreset; label: string; icon: React.ReactNode }
   { id: "video", label: "Video/YouTube", icon: <Video className="w-4 h-4" /> },
 ];
 
+const POPULAR_PRESETS: ContentPreset[] = ["link", "text", "wifi", "vcard"];
+
 export default function ContentSelector({
   preset,
   data,
   onPreset,
   onField,
 }: Props) {
+  const [showAllTypes, setShowAllTypes] = useState(false);
+  const popular = PRESETS.filter((item) => POPULAR_PRESETS.includes(item.id));
+  const extra = PRESETS.filter((item) => !POPULAR_PRESETS.includes(item.id));
+  const showAdvancedTypes = showAllTypes || !POPULAR_PRESETS.includes(preset);
+
   return (
     <section className="space-y-4" aria-labelledby="content-heading">
-      <h2 id="content-heading" className="flex items-center gap-3 text-xl font-black tracking-tight text-[var(--color-on-surface)]">
-        <span className="ui-step">1</span>
-        Complete the content
-      </h2>
-
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Content type">
-        {PRESETS.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => onPreset(p.id)}
-            aria-pressed={preset === p.id}
-            className={`ui-chip ${preset === p.id ? "is-active" : ""}`}
-          >
-            {p.icon}
-            {p.label}
-          </button>
-        ))}
+      <div>
+        <h2 id="content-heading" className="flex items-center gap-3 text-xl font-black tracking-tight text-[var(--color-on-surface)]">
+          <span className="ui-step">1</span>
+          What do you want to share?
+        </h2>
+        <p className="mt-1 pl-9 text-sm text-[var(--color-on-surface-variant)]">
+          Pick a type. Your QR preview updates as you enter the details.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Popular QR content types">
+        {popular.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => onPreset(item.id)}
+            aria-pressed={preset === item.id}
+            className={`ui-chip ${preset === item.id ? "is-active" : ""}`}
+          >
+            {item.icon}
+            {item.label}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => setShowAllTypes((value) => !value)}
+          aria-expanded={showAdvancedTypes}
+          className="ui-chip"
+        >
+          {showAdvancedTypes ? "Fewer types" : "More types"}
+        </button>
+      </div>
+
+      {showAdvancedTypes && (
+        <div className="rounded-2xl border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-[var(--color-on-surface-variant)]">
+            More QR types
+          </p>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="More QR content types">
+            {extra.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onPreset(item.id)}
+                aria-pressed={preset === item.id}
+                className={`ui-chip ${preset === item.id ? "is-active" : ""}`}
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Fields preset={preset} data={data} onField={onField} />
       </div>
     </section>
