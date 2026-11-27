@@ -7,34 +7,56 @@ export type ImageSource =
   | HTMLCanvasElement
   | ImageBitmap
   | ImageData
-  | string; // data URL / object URL
+  | string;
 
 export interface DecodeOptions {
-  /** Largest dimension (px) used when downscaling before decoding. */
+  /** Largest working dimension. The source is never enlarged beyond this cap. */
   maxDimension?: number;
-  /** Try grayscale + contrast passes before giving up. */
+  /** Enable crop and contrast passes after the fast full-image decode. */
   preprocess?: boolean;
 }
 
 export interface DecodeResult {
   data: string;
-  /** Width/height of the image data that produced the match. */
   width: number;
   height: number;
 }
 
+interface Drawable {
+  width: number;
+  height: number;
+  draw: (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
+  dispose?: () => void;
+}
+
+interface NativeBarcodeResult {
+  rawValue: string;
+  format?: string;
+}
+
+interface NativeBarcodeDetector {
+  detect(source: HTMLCanvasElement): Promise<NativeBarcodeResult[]>;
+}
+
+interface NativeBarcodeDetectorConstructor {
+  new (options?: { formats?: string[] }): NativeBarcodeDetector;
+}
+
 /**
- * One reusable QR decoding pipeline for uploads, drag-and-drop, clipboard
- * paste and programmatic callers. All inputs are normalized to an
- * HTMLImageElement/ImageBitmap then drawn to a canvas and decoded with jsQR.
+ * A bounded, local-only decoding pipeline:
+ * 1. Fast full-image decode.
+ * 2. Native QR detection where available.
+ * 3. Inversion and alternate image scales.
+ * 4. Nine overlapping crop windows for small or off-centre codes.
+ * 5. Grayscale/contrast recovery as a final pass.
  *
- * Everything runs in the browser. No bytes leave the device.
+ * No image bytes are uploaded or sent to a remote service.
  */
 export async function decodeQrFromImage(
   source: ImageSource,
   options: DecodeOptions = {}
 ): Promise<DecodeResult | null> {
-  const maxDim = options.maxDimension ?? 1600;
+  const maxDimension = Math.max(256, Math.min(options.maxDimension ?? 2000, 4096));
   const preprocess = options.preprocess ?? true;
 
   let drawable: Drawable;
@@ -43,109 +65,191 @@ export async function decodeQrFromImage(
   } catch {
     return null;
   }
-  const { width, height, draw } = drawable;
-  if (!width || !height) return null;
 
-  // Cap the working resolution to avoid huge allocations on 12 MP photos.
-  const scale = Math.min(1, maxDim / Math.max(width, height));
-  const targetW = Math.max(1, Math.round(width * scale));
-  const targetH = Math.max(1, Math.round(height * scale));
+  try {
+    const { width, height } = drawable;
+    if (!width || !height) return null;
 
-  const canvas = document.createElement("canvas");
-  canvas.width = targetW;
-  canvas.height = targetH;
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  if (!ctx) return null;
-  draw(ctx, targetW, targetH);
+    const scale = Math.min(1, maxDimension / Math.max(width, height));
+    const targetWidth = Math.max(1, Math.round(width * scale));
+    const targetHeight = Math.max(1, Math.round(height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) return null;
 
-  // 1. Straight decode at full downscaled size.
-  let imageData = ctx.getImageData(0, 0, targetW, targetH);
-  let found = jsQR(imageData.data, targetW, targetH, {
-    inversionAttempts: "attemptBoth",
-  });
-  if (found?.data) {
-    return { data: found.data, width: targetW, height: targetH };
-  }
+    drawable.draw(context, targetWidth, targetHeight);
 
-  if (!preprocess) return null;
+    let data = decodeCanvas(context, targetWidth, targetHeight);
+    if (data) return { data, width: targetWidth, height: targetHeight };
+    if (!preprocess) return null;
 
-  // 2. Try several scale/crop strategies for partially-visible codes.
-  const strategies = [0.75, 0.5, 1.5];
-  for (const s of strategies) {
-    const w = Math.max(1, Math.round(targetW * s));
-    const h = Math.max(1, Math.round(targetH * s));
-    if (w > maxDim || h > maxDim) continue;
-    canvas.width = w;
-    canvas.height = h;
-    draw(ctx, w, h);
-    imageData = ctx.getImageData(0, 0, w, h);
-    found = jsQR(imageData.data, w, h, { inversionAttempts: "attemptBoth" });
-    if (found?.data) return { data: found.data, width: w, height: h };
-  }
+    // Native BarcodeDetector is an optional enhancement. A short timeout keeps
+    // it from holding up the local jsQR fallback on slower browser engines.
+    data = await detectWithNativeBarcodeDetector(canvas);
+    if (data) return { data, width: targetWidth, height: targetHeight };
 
-  // 3. Center crop (helps when QR sits in the middle of a large photo).
-  const full = document.createElement("canvas");
-  full.width = targetW;
-  full.height = targetH;
-  const fctx = full.getContext("2d", { willReadFrequently: true });
-  if (fctx) {
-    draw(fctx, targetW, targetH);
-    for (const ratio of [0.6, 0.4]) {
-      const cw = Math.round(targetW * ratio);
-      const ch = Math.round(targetH * ratio);
-      const sx = (targetW - cw) / 2;
-      const sy = (targetH - ch) / 2;
-      canvas.width = cw;
-      canvas.height = ch;
-      ctx.drawImage(full, sx, sy, cw, ch, 0, 0, cw, ch);
-      imageData = ctx.getImageData(0, 0, cw, ch);
-      found = jsQR(imageData.data, cw, ch, { inversionAttempts: "attemptBoth" });
-      if (found?.data) return { data: found.data, width: cw, height: ch };
+    data = decodeCanvas(context, targetWidth, targetHeight, true);
+    if (data) return { data, width: targetWidth, height: targetHeight };
+
+    // Alternate sampling scales can recover codes blurred by image resizing.
+    for (const ratio of [0.75, 0.5]) {
+      const scaledWidth = Math.max(1, Math.round(targetWidth * ratio));
+      const scaledHeight = Math.max(1, Math.round(targetHeight * ratio));
+      const scaledCanvas = document.createElement("canvas");
+      scaledCanvas.width = scaledWidth;
+      scaledCanvas.height = scaledHeight;
+      const scaledContext = scaledCanvas.getContext("2d", { willReadFrequently: true });
+      if (!scaledContext) continue;
+      drawable.draw(scaledContext, scaledWidth, scaledHeight);
+      data = decodeCanvas(scaledContext, scaledWidth, scaledHeight, true);
+      if (data) return { data, width: scaledWidth, height: scaledHeight };
     }
-  }
 
-  // 4. Grayscale + contrast enhancement.
-  canvas.width = targetW;
-  canvas.height = targetH;
-  draw(ctx, targetW, targetH);
-  imageData = ctx.getImageData(0, 0, targetW, targetH);
-  enhanceContrast(imageData);
-  found = jsQR(imageData.data, targetW, targetH, {
-    inversionAttempts: "attemptBoth",
-  });
-  if (found?.data) {
-    return { data: found.data, width: targetW, height: targetH };
-  }
+    // Keep one copy at the original working resolution for the crop passes.
+    const fullCanvas = document.createElement("canvas");
+    fullCanvas.width = targetWidth;
+    fullCanvas.height = targetHeight;
+    const fullContext = fullCanvas.getContext("2d", { willReadFrequently: true });
+    if (!fullContext) return null;
+    drawable.draw(fullContext, targetWidth, targetHeight);
 
-  return null;
+    const cropCanvas = document.createElement("canvas");
+    cropCanvas.width = targetWidth;
+    cropCanvas.height = targetHeight;
+    const cropContext = cropCanvas.getContext("2d", { willReadFrequently: true });
+    if (!cropContext) return null;
+
+    // Overlapping windows cover the centre, edges and corners. Scaling each
+    // crop back to the working canvas makes a QR in a busy screenshot easier
+    // for the decoder to isolate.
+    const cropRatio = 0.72;
+    const cropWidth = Math.max(1, Math.round(targetWidth * cropRatio));
+    const cropHeight = Math.max(1, Math.round(targetHeight * cropRatio));
+    const offsets = [0, 0.14, 0.28];
+
+    for (const yRatio of offsets) {
+      for (const xRatio of offsets) {
+        const sx = Math.min(targetWidth - cropWidth, Math.round(targetWidth * xRatio));
+        const sy = Math.min(targetHeight - cropHeight, Math.round(targetHeight * yRatio));
+        cropContext.clearRect(0, 0, targetWidth, targetHeight);
+        cropContext.drawImage(
+          fullCanvas,
+          sx,
+          sy,
+          cropWidth,
+          cropHeight,
+          0,
+          0,
+          targetWidth,
+          targetHeight
+        );
+        data = decodeCanvas(cropContext, targetWidth, targetHeight, true);
+        if (data) return { data, width: targetWidth, height: targetHeight };
+      }
+    }
+
+    // Final recovery pass for faded or low-contrast screenshots.
+    cropContext.clearRect(0, 0, targetWidth, targetHeight);
+    cropContext.drawImage(fullCanvas, 0, 0);
+    const imageData = cropContext.getImageData(0, 0, targetWidth, targetHeight);
+    enhanceContrast(imageData);
+    const result = jsQR(imageData.data, targetWidth, targetHeight, {
+      inversionAttempts: "attemptBoth",
+    });
+    return result?.data
+      ? { data: result.data, width: targetWidth, height: targetHeight }
+      : null;
+  } catch {
+    // Malformed images and memory-constrained canvas implementations fail cleanly.
+    return null;
+  } finally {
+    drawable.dispose?.();
+  }
 }
 
-interface Drawable {
-  width: number;
-  height: number;
-  draw: (
-    ctx: CanvasRenderingContext2D,
-    w: number,
-    h: number,
-    dx?: number,
-    dy?: number
-  ) => void;
+async function detectWithNativeBarcodeDetector(
+  canvas: HTMLCanvasElement
+): Promise<string | null> {
+  const Detector = (
+    globalThis as typeof globalThis & {
+      BarcodeDetector?: NativeBarcodeDetectorConstructor;
+    }
+  ).BarcodeDetector;
+  if (!Detector) return null;
+
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const detector = new Detector({ formats: ["qr_code"] });
+    const detection = detector.detect(canvas);
+    const timeout = new Promise<null>((resolve) => {
+      timeoutId = setTimeout(() => resolve(null), 650);
+    });
+    const results = await Promise.race([detection, timeout]);
+    if (!results) return null;
+    return results.find((item) => item.format === "qr_code" && item.rawValue)?.rawValue ?? null;
+  } catch {
+    return null;
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
+function decodeCanvas(
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  attemptBothInversions = false
+): string | null {
+  try {
+    const imageData = context.getImageData(0, 0, width, height);
+    const result = jsQR(imageData.data, width, height, {
+      inversionAttempts: attemptBothInversions ? "attemptBoth" : "dontInvert",
+    });
+    return result?.data ?? null;
+  } catch {
+    return null;
+  }
 }
 
 async function toDrawable(source: ImageSource): Promise<Drawable> {
   if (typeof source === "string") {
-    const img = await loadImage(source);
-    return imageDrawable(img);
+    const image = await loadImage(source);
+    return imageDrawable(image);
   }
-  if (source instanceof File || source instanceof Blob) {
+
+  if (typeof Blob !== "undefined" && source instanceof Blob) {
+    // Reject known non-image MIME types before asking browser decoders to open them.
+    // Some browser test environments do not settle createImageBitmap for text blobs.
+    if (source.type && !source.type.toLowerCase().startsWith("image/")) {
+      throw new Error("Source is not an image");
+    }
+
+    // ImageBitmap avoids an object-URL decode round trip on modern browsers.
+    if (typeof createImageBitmap === "function") {
+      try {
+        const bitmap = await createImageBitmap(source);
+        return {
+          width: bitmap.width,
+          height: bitmap.height,
+          draw: (context, width, height) => context.drawImage(bitmap, 0, 0, width, height),
+          dispose: () => bitmap.close(),
+        };
+      } catch {
+        // Continue with the HTMLImageElement fallback.
+      }
+    }
+
     const url = URL.createObjectURL(source);
     try {
-      const img = await loadImage(url);
-      return imageDrawable(img);
+      const image = await loadImage(url);
+      return imageDrawable(image);
     } finally {
       URL.revokeObjectURL(url);
     }
   }
+
   if (typeof HTMLImageElement !== "undefined" && source instanceof HTMLImageElement) {
     return imageDrawable(source);
   }
@@ -153,109 +257,125 @@ async function toDrawable(source: ImageSource): Promise<Drawable> {
     return {
       width: source.width,
       height: source.height,
-      draw: (ctx, w, h, dx = 0, dy = 0) =>
-        ctx.drawImage(source, dx, dy, w, h),
+      draw: (context, width, height) => context.drawImage(source, 0, 0, width, height),
     };
   }
   if (typeof ImageBitmap !== "undefined" && source instanceof ImageBitmap) {
     return {
       width: source.width,
       height: source.height,
-      draw: (ctx, w, h, dx = 0, dy = 0) =>
-        ctx.drawImage(source, dx, dy, w, h),
+      draw: (context, width, height) => context.drawImage(source, 0, 0, width, height),
     };
   }
-  if (source instanceof ImageData) {
+  if (typeof ImageData !== "undefined" && source instanceof ImageData) {
+    const stagingCanvas = document.createElement("canvas");
+    stagingCanvas.width = source.width;
+    stagingCanvas.height = source.height;
+    const stagingContext = stagingCanvas.getContext("2d");
+    if (!stagingContext) {
+      return { width: 0, height: 0, draw: () => undefined };
+    }
+    stagingContext.putImageData(source, 0, 0);
     return {
       width: source.width,
       height: source.height,
-      draw: (ctx) => {
-        ctx.putImageData(source, 0, 0);
-      },
+      draw: (context, width, height) =>
+        context.drawImage(stagingCanvas, 0, 0, width, height),
     };
   }
-  // Fallback: attempt to treat as image-like with a src.
+
   if (source && typeof (source as HTMLImageElement).src === "string") {
-    const img = await loadImage((source as HTMLImageElement).src);
-    return imageDrawable(img);
+    const image = await loadImage((source as HTMLImageElement).src);
+    return imageDrawable(image);
   }
+
   return { width: 0, height: 0, draw: () => undefined };
 }
 
-function imageDrawable(img: HTMLImageElement): Drawable {
+function imageDrawable(image: HTMLImageElement): Drawable {
   return {
-    width: img.naturalWidth || img.width,
-    height: img.naturalHeight || img.height,
-    draw: (ctx, w, h, dx = 0, dy = 0) => ctx.drawImage(img, dx, dy, w, h),
+    width: image.naturalWidth || image.width,
+    height: image.naturalHeight || image.height,
+    draw: (context, width, height) => context.drawImage(image, 0, 0, width, height),
   };
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    const img = new Image();
+    const image = new Image();
     let settled = false;
     const timer = setTimeout(() => {
-      if (!settled) {
-        settled = true;
-        reject(new Error("Image load timed out"));
-      }
-    }, 4000);
-    img.onload = () => {
+      if (settled) return;
+      settled = true;
+      reject(new Error("Image load timed out"));
+    }, 6000);
+
+    image.onload = () => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
-      resolve(img);
+      resolve(image);
     };
-    img.onerror = () => {
+    image.onerror = () => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
       reject(new Error("Invalid or unreadable image"));
     };
-    img.src = src;
+    image.src = src;
   });
 }
 
-/** Simple contrast stretch on the luminance channel. */
+/** Grayscale and contrast stretch without mutating the source image. */
 function enhanceContrast(imageData: ImageData) {
-  const d = imageData.data;
+  const data = imageData.data;
   let min = 255;
   let max = 0;
-  for (let i = 0; i < d.length; i += 4) {
-    const lum = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-    if (lum < min) min = lum;
-    if (lum > max) max = lum;
+
+  for (let index = 0; index < data.length; index += 4) {
+    const luminance =
+      0.299 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
+    min = Math.min(min, luminance);
+    max = Math.max(max, luminance);
   }
-  const range = max - min || 1;
-  for (let i = 0; i < d.length; i += 4) {
-    const lum = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-    const v = Math.max(0, Math.min(255, ((lum - min) / range) * 255));
-    d[i] = d[i + 1] = d[i + 2] = v;
+
+  const range = Math.max(1, max - min);
+  for (let index = 0; index < data.length; index += 4) {
+    const luminance =
+      0.299 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
+    const value = Math.max(0, Math.min(255, ((luminance - min) / range) * 255));
+    data[index] = value;
+    data[index + 1] = value;
+    data[index + 2] = value;
   }
 }
 
 /** Extract the first image/* Blob from a ClipboardEvent. */
 export function blobFromClipboard(
-  e: ClipboardEvent
+  event: ClipboardEvent
 ): { blob: Blob; name: string } | null {
-  const items = e.clipboardData?.items;
+  const items = event.clipboardData?.items;
   if (!items) return null;
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item.kind === "file" && item.type.startsWith("image/")) {
-      const blob = item.getAsFile();
-      if (blob) return { blob, name: blob.name || "clipboard.png" };
+
+  for (let index = 0; index < items.length; index++) {
+    const item = items[index];
+    if (item.kind !== "file" || !item.type.startsWith("image/")) continue;
+    const blob = item.getAsFile();
+    if (blob) {
+      const fileName = "name" in blob ? String((blob as File).name || "") : "";
+      return { blob, name: fileName || "Clipboard screenshot" };
     }
   }
   return null;
 }
 
-/** Extract an image File from a DragEvent (first image/* found). */
-export function fileFromDragEvent(e: DragEvent): File | null {
-  const files = e.dataTransfer?.files;
+/** Extract the first image File from a DragEvent. */
+export function fileFromDragEvent(event: DragEvent): File | null {
+  const files = event.dataTransfer?.files;
   if (!files || files.length === 0) return null;
-  for (let i = 0; i < files.length; i++) {
-    if (files[i].type.startsWith("image/")) return files[i];
+
+  for (let index = 0; index < files.length; index++) {
+    if (files[index].type.startsWith("image/")) return files[index];
   }
   return null;
 }

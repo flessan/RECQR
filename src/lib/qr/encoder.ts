@@ -128,63 +128,127 @@ export function formatICalDate(value: string): string {
  * filled in - otherwise `buildPayload` produces placeholders such as `tel:`,
  * `geo:,` or an empty-SSID Wi-Fi string, which encode into a QR nobody can use.
  */
-const REQUIRED_FIELDS: Record<ContentPreset, string[]> = {
-  link: ["url"],
-  social: ["url"],
-  app: ["url"],
-  image: ["url"],
-  video: ["url"],
-  text: ["text"],
-  email: ["to"],
-  call: ["number"],
-  sms: ["number"],
-  whatsapp: ["number"],
-  wifi: ["ssid"],
-  vcard: ["formattedName", "firstName", "lastName"],
-  event: ["summary"],
-  geo: ["latitude", "longitude"],
-};
-
-/**
- * True when the active preset has everything it needs to produce a usable
- * payload. vCard accepts any name field; geo needs both coordinates.
- */
-export function hasRequiredContent(content: GeneratorContent): boolean {
-  const required = REQUIRED_FIELDS[content.preset] ?? [];
-  if (!required.length) return buildPayload(content).trim().length > 0;
-  const filled = (k: string) => clean(content.data[k]).length > 0;
-  if (content.preset === "vcard") return required.some(filled);
-  if (content.preset === "geo") {
-    return required.every(
-      (k) => filled(k) && Number.isFinite(Number(clean(content.data[k])))
+function isValidWebAddress(value: string): boolean {
+  if (!value || /\s/.test(value)) return false;
+  try {
+    const url = new URL(ensureScheme(value));
+    return (
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      Boolean(url.hostname)
     );
+  } catch {
+    return false;
   }
-  return required.every(filled);
 }
 
-/** Human-readable hint describing what is still missing, or null when ready. */
-export function missingContentHint(content: GeneratorContent): string | null {
-  if (hasRequiredContent(content)) return null;
-  switch (content.preset) {
+function isValidAppLink(value: string): boolean {
+  if (!value || /\s/.test(value)) return false;
+  const candidate = /^[a-z][a-z0-9+.-]*:/i.test(value) ? value : ensureScheme(value);
+  try {
+    const url = new URL(candidate);
+    return !["javascript:", "data:", "file:", "vbscript:", "blob:"].includes(url.protocol);
+  } catch {
+    return false;
+  }
+}
+
+function isValidEmail(value: string): boolean {
+  return /^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/.test(value);
+}
+
+function isValidPhone(value: string): boolean {
+  const digits = value.replace(/\D/g, "");
+  return /^\+?[0-9][0-9\s().-]*$/.test(value) && digits.length >= 3;
+}
+
+function getContentError(content: GeneratorContent): string | null {
+  const { preset, data } = content;
+  const d = (key: string) => clean(data[key]);
+
+  switch (preset) {
+    case "link":
+      return !d("url")
+        ? "Enter a website address to create your QR code."
+        : isValidWebAddress(d("url"))
+          ? null
+          : "Enter a valid website address, such as example.com.";
+    case "social":
+    case "image":
+    case "video":
+      return !d("url")
+        ? "Enter a website address to create your QR code."
+        : isValidWebAddress(d("url"))
+          ? null
+          : "Enter a valid https:// or http:// address.";
+    case "app":
+      return !d("url")
+        ? "Enter an app link or website address."
+        : isValidAppLink(d("url"))
+          ? null
+          : "Enter a valid app link or website address. Script and local-file links are not allowed.";
     case "text":
-      return "Enter the text you want to encode.";
+      return d("text") ? null : "Type the text you want to put in the QR code.";
     case "email":
-      return "Enter the recipient e-mail address.";
+      return !d("to")
+        ? "Enter the email address that should receive the message."
+        : isValidEmail(d("to"))
+          ? null
+          : "Enter a valid email address, such as name@example.com.";
     case "call":
     case "sms":
-    case "whatsapp":
-      return "Enter a phone number.";
-    case "wifi":
-      return "Enter the network name (SSID).";
+      return !d("number")
+        ? "Enter a phone number, including the country code if needed."
+        : isValidPhone(d("number"))
+          ? null
+          : "Enter a valid phone number using digits, spaces, +, brackets, or dashes.";
+    case "whatsapp": {
+      const digits = d("number").replace(/\D/g, "");
+      return !digits
+        ? "Enter a WhatsApp number with its country code."
+        : digits.length >= 6 && digits.length <= 15
+          ? null
+          : "Use a WhatsApp number with 6 to 15 digits, including the country code.";
+    }
+    case "wifi": {
+      if (!d("ssid")) return "Enter the Wi-Fi network name (SSID).";
+      const encryption = (d("encryption") || "WPA").toUpperCase();
+      return encryption !== "NOPASS" && !d("password")
+        ? "Add the Wi-Fi password, or choose No password for an open network."
+        : null;
+    }
     case "vcard":
-      return "Enter at least a name.";
+      return d("formattedName") || d("firstName") || d("lastName")
+        ? null
+        : "Add at least a first name, last name, or full name.";
     case "event":
-      return "Enter the event title.";
-    case "geo":
-      return "Enter both latitude and longitude.";
+      return d("summary") ? null : "Give your event a title.";
+    case "geo": {
+      const latitude = Number(d("latitude"));
+      const longitude = Number(d("longitude"));
+      if (!d("latitude") || !d("longitude")) {
+        return "Enter both latitude and longitude.";
+      }
+      if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
+        return "Latitude must be between -90 and 90.";
+      }
+      if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+        return "Longitude must be between -180 and 180.";
+      }
+      return null;
+    }
     default:
-      return "Enter a URL to generate the QR code.";
+      return buildPayload(content).trim() ? null : "Add content to create your QR code.";
   }
+}
+
+/** True only when the active preset can produce a useful QR payload. */
+export function hasRequiredContent(content: GeneratorContent): boolean {
+  return getContentError(content) === null;
+}
+
+/** A plain-language prompt that tells the user what needs fixing. */
+export function missingContentHint(content: GeneratorContent): string | null {
+  return getContentError(content);
 }
 
 /** Default per-preset content (used when switching presets or resetting). */

@@ -31,10 +31,11 @@ import {
 
 interface Props {
   result: QRResult;
+  source?: string | null;
   onScanAgain: () => void;
 }
 
-export default function ScanResultCard({ result, onScanAgain }: Props) {
+export default function ScanResultCard({ result, source, onScanAgain }: Props) {
   const [copied, setCopied] = useState<string | null>(null);
   const [revealPassword, setRevealPassword] = useState(false);
   const canShare = typeof navigator !== "undefined" && "share" in navigator;
@@ -55,17 +56,29 @@ export default function ScanResultCard({ result, onScanAgain }: Props) {
       role="region"
       aria-label="Scan result"
     >
-      <div className="flex items-center justify-between gap-3 mb-4">
-        <h3 className="flex items-center gap-2 text-lg font-black tracking-tight text-[var(--color-on-surface)]">
-          <TypeIcon type={result.type} />
-          <span className="capitalize">{result.type}</span>
-        </h3>
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <span className="ui-badge mb-2">QR content found</span>
+          <h2 className="flex items-center gap-2 text-xl font-black tracking-tight text-[var(--color-on-surface)] sm:text-2xl">
+            <TypeIcon type={result.type} />
+            {resultTitle(result)}
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-[var(--color-on-surface-variant)]">
+            {resultSummary(result)}
+          </p>
+          {source && (
+            <p className="mt-1 truncate text-xs font-medium text-[var(--color-on-surface-variant)]">
+              Read from {source}
+            </p>
+          )}
+        </div>
         <button
+          type="button"
           onClick={onScanAgain}
-          className="ui-btn ui-btn-ghost ui-btn-sm text-[var(--color-primary)]"
+          className="ui-btn ui-btn-ghost ui-btn-sm flex-none text-[var(--color-primary)]"
         >
-          <RefreshCw className="w-4 h-4" />
-          Scan again
+          <RefreshCw className="h-4 w-4" />
+          Read another
         </button>
       </div>
 
@@ -114,6 +127,16 @@ export default function ScanResultCard({ result, onScanAgain }: Props) {
         <pre className="ui-card-flat whitespace-pre-wrap break-words p-4 font-sans text-sm text-[var(--color-on-surface)]">
           {result.raw}
         </pre>
+      )}
+      {result.parsed && result.parsed.kind !== "text" && (
+        <details className="mt-4 rounded-2xl border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] px-4 py-3">
+          <summary className="cursor-pointer text-sm font-bold text-[var(--color-on-surface)]">
+            Show original QR data
+          </summary>
+          <pre className="mt-3 max-h-48 overflow-auto whitespace-pre-wrap break-all text-xs leading-5 text-[var(--color-on-surface-variant)]">
+            {result.raw}
+          </pre>
+        </details>
       )}
 
       <div className="mt-5 flex flex-wrap gap-2">
@@ -166,12 +189,46 @@ export default function ScanResultCard({ result, onScanAgain }: Props) {
 }
 
 function canOpen(result: QRResult): boolean {
-  return ["url", "email", "phone", "sms", "whatsapp", "geo"].includes(result.type);
+  if (result.type === "url") {
+    return result.parsed?.kind === "url" && result.parsed.isSafe;
+  }
+  return ["email", "phone", "sms", "whatsapp", "geo"].includes(result.type);
+}
+
+function resultTitle(result: QRResult): string {
+  switch (result.type) {
+    case "url": return "Website link";
+    case "wifi": return "Wi-Fi network";
+    case "email": return "Email details";
+    case "phone": return "Phone number";
+    case "sms": return "Text message";
+    case "whatsapp": return "WhatsApp message";
+    case "geo": return "Map location";
+    case "calendar": return "Calendar event";
+    case "vcard": return "Contact card";
+    default: return "Text or other content";
+  }
+}
+
+function resultSummary(result: QRResult): string {
+  switch (result.type) {
+    case "url": return "This QR code contains a website address. Review the destination before opening it.";
+    case "wifi": return "This QR code contains Wi-Fi connection details.";
+    case "email": return "This QR code prepares an email with the details shown below.";
+    case "phone": return "This QR code contains a phone number.";
+    case "sms": return "This QR code prepares a text message.";
+    case "whatsapp": return "This QR code contains a WhatsApp conversation link.";
+    case "geo": return "This QR code points to a location on the map.";
+    case "calendar": return "This QR code contains an event and its details.";
+    case "vcard": return "This QR code contains contact information.";
+    default: return "Here is the text stored inside this QR code.";
+  }
 }
 
 function openLabel(result: QRResult): string {
+  if (result.type === "url") return "Open website";
   if (result.type === "geo") return "Open map";
-  if (result.type === "email") return "Send email";
+  if (result.type === "email") return "Write email";
   if (result.type === "phone") return "Call";
   if (result.type === "sms" || result.type === "whatsapp") return "Open message";
   return "Open link";
@@ -206,6 +263,7 @@ function ActionButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={
         primary ? "ui-btn ui-btn-primary ui-btn-sm" : "ui-btn ui-btn-surface ui-btn-sm"
@@ -245,23 +303,20 @@ function UrlBody({
   const u = result.parsed;
   return (
     <div className="space-y-3">
-      <div className="ui-card-flat p-4">
-        <div className="ui-label">
-          Website
+      <div className="ui-card-flat space-y-2 p-4">
+        <div className="ui-label">Destination</div>
+        <div className="break-all text-lg font-black text-[var(--color-on-surface)]">
+          {u.hostname || u.host || "Blocked destination"}
         </div>
-        <div className="break-all font-bold text-[var(--color-on-surface)]">
-          {u.hostname}
-        </div>
-        <div className="text-xs text-[var(--color-on-surface-variant)] break-all mt-1">
-          {u.pathname || "/"}{u.search}{u.hash}
-        </div>
+        <p className="break-all text-sm leading-6 text-[var(--color-on-surface-variant)]">
+          {u.href}
+        </p>
       </div>
       {!u.isSafe && (
         <div className="ui-card-flat flex items-start gap-2 border-[var(--color-error)] bg-[var(--color-error-container)] p-3 text-sm font-semibold text-[var(--color-on-error-container)]">
           <ShieldAlert className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <div>
-            <strong>Unsafe link blocked.</strong> This URL uses a potentially
-            dangerous protocol ({u.protocol}). Opening it is disabled.
+            <strong>This destination is blocked.</strong> The QR contains a {u.protocol} address that RECQR will not open.
           </div>
         </div>
       )}
@@ -269,7 +324,7 @@ function UrlBody({
         <div className="ui-card-flat ui-card-tertiary flex items-start gap-2 p-3 text-sm font-semibold">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <div>
-            <strong>Proceed with caution.</strong> This link
+            <strong>Check this link before opening.</strong> This link
             {u.warnings.includes("punycode") ? " uses unicode characters that may look like another domain (punycode)" : ""}
             {u.warnings.includes("raw-ip") ? " points directly to an IP address" : ""}
             {u.warnings.includes("shortened-link") ? " is a URL shortener (destination hidden)" : ""}

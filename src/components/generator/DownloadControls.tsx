@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Download, ImageDown } from "lucide-react";
 import {
   downloadBlob,
@@ -31,98 +31,121 @@ export default function DownloadControls({
   onOutput,
   filename = "recqr-qr",
 }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const downloadRaster = async (format: "png" | "webp") => {
     if (!bitmap) return;
+
+    const probe = document.createElement("canvas");
+    probe.width = probe.height = 1;
+    const supportsWebP =
+      format === "png" || probe.toDataURL("image/webp").startsWith("data:image/webp");
+
+    const actualFormat = supportsWebP ? format : "png";
+    const mime = actualFormat === "webp" ? "image/webp" : "image/png";
+    const canvas = document.createElement("canvas");
+    const rendered = renderToCanvas(bitmap, design, logo, canvas);
+    if (!rendered) {
+      throw new Error("The browser could not create a canvas for this QR code.");
+    }
+
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      if (typeof canvas.toBlob !== "function") {
+        reject(new Error("This browser cannot export a canvas image."));
+        return;
+      }
+      canvas.toBlob((result) => {
+        if (result) resolve(result);
+        else reject(new Error("The browser could not encode the image."));
+      }, mime, 0.95);
+    });
+
+    const extension = actualFormat;
+    downloadBlob(blob, filename + "." + extension);
+    return supportsWebP
+      ? null
+      : "WebP is not supported by this browser, so a PNG file was downloaded instead.";
+  };
+
+  const handleDownload = async () => {
+    if (!bitmap || busy) return;
     setBusy(true);
+    setError(null);
+    setMessage(null);
+
     try {
-      const canvas = canvasRef.current ?? document.createElement("canvas");
-      await new Promise<void>((resolve) => {
-        renderToCanvas(bitmap, design, logo, canvas, () => resolve());
-        // When there is no logo the ready callback fires synchronously; guard
-        // against double-resolve by also resolving on the next tick.
-        if (!bitmap.logo) setTimeout(resolve, 0);
-      });
-      const requestedMime = format === "webp" ? "image/webp" : "image/png";
-      // Probe whether the browser can actually encode the requested format.
-      const probe = document.createElement("canvas");
-      probe.width = probe.height = 1;
-      const supports =
-        requestedMime === "image/png" ||
-        probe.toDataURL(requestedMime).startsWith("data:image/webp");
-      const mime = supports ? requestedMime : "image/png";
-      const ext = supports ? format : "png";
-      canvas.toBlob(
-        (blob) => {
-          if (blob) downloadBlob(blob, `${filename}.${ext}`);
-          setBusy(false);
-        },
-        mime,
-        0.95
-      );
+      if (output.format === "svg") {
+        const svg = renderToSvg(bitmap, design, logo);
+        const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+        downloadBlob(blob, filename + ".svg");
+      } else {
+        const fallbackMessage = await downloadRaster(output.format);
+        if (fallbackMessage) setMessage(fallbackMessage);
+      }
     } catch {
+      setError("Could not create the download. Try PNG or reduce the QR size.");
+    } finally {
       setBusy(false);
     }
   };
 
-  const downloadSvg = () => {
-    if (!bitmap) return;
-    const svg = renderToSvg(bitmap, design, logo);
-    const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
-    downloadBlob(blob, `${filename}.svg`);
-  };
-
-  const handleDownload = () => {
-    if (output.format === "svg") downloadSvg();
-    else void downloadRaster(output.format);
-  };
-
   return (
     <section className="space-y-4" aria-labelledby="download-heading">
-      <h2 id="download-heading" className="flex items-center gap-3 text-xl font-black tracking-tight text-[var(--color-on-surface)]">
-        <span className="ui-step">4</span>
-        Download
-      </h2>
+      <div className="flex items-center gap-3">
+        <h2 id="download-heading" className="text-lg font-black tracking-tight text-[var(--color-on-surface)]">
+          Download your QR
+        </h2>
+      </div>
 
       <div>
-        <span className="ui-label">Format</span>
+        <span className="ui-label">File format</span>
         <div className="ui-segment">
-          {(["png", "svg", "webp"] as const).map((f) => (
+          {(["png", "svg", "webp"] as const).map((format) => (
             <button
-              key={f}
+              key={format}
               type="button"
-              onClick={() => onOutput({ format: f })}
-              disabled={f === "webp" && design.transparentBg}
-              className={`ui-chip uppercase ${output.format === f ? "is-active" : ""}`}
-              title={f === "webp" && design.transparentBg ? "WebP export uses the configured background" : undefined}
+              onClick={() => {
+                setMessage(null);
+                onOutput({ format });
+              }}
+              aria-pressed={output.format === format}
+              className={"ui-chip uppercase " + (output.format === format ? "is-active" : "")}
             >
-              {f}
+              {format}
             </button>
           ))}
         </div>
-        {output.format === "svg" && (
-          <p className="text-xs text-[var(--color-on-surface-variant)] mt-2">
-            SVG scales losslessly and embeds your logo as an image.
-          </p>
-        )}
+        <p className="mt-2 text-xs text-[var(--color-on-surface-variant)]">
+          PNG works everywhere. SVG stays sharp at any size.
+        </p>
       </div>
 
       <button
         type="button"
-        onClick={handleDownload}
+        onClick={() => void handleDownload()}
         disabled={!bitmap || busy}
         className="ui-btn ui-btn-primary ui-btn-lg w-full"
       >
         {busy ? (
-          <ImageDown className="w-5 h-5 animate-pulse" />
+          <ImageDown className="h-5 w-5 animate-pulse" />
         ) : (
-          <Download className="w-5 h-5" />
+          <Download className="h-5 w-5" />
         )}
-        {busy ? "Rendering…" : `Download ${output.format.toUpperCase()}`}
+        {busy ? "Preparing file…" : "Download " + output.format.toUpperCase()}
       </button>
-      <canvas ref={canvasRef} className="hidden" aria-hidden="true" />
+
+      {message && (
+        <p role="status" className="rounded-xl bg-[var(--color-surface-container-high)] px-3 py-2 text-xs font-semibold text-[var(--color-on-surface)]">
+          {message}
+        </p>
+      )}
+      {error && (
+        <p role="alert" className="rounded-xl bg-[var(--color-error-container)] px-3 py-2 text-xs font-semibold text-[var(--color-on-error-container)]">
+          {error}
+        </p>
+      )}
     </section>
   );
 }

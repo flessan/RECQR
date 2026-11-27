@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#141218" },
+    { media: "(prefers-color-scheme: light)", color: "#f2f4ff" },
+    { media: "(prefers-color-scheme: dark)", color: "#080b1c" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     "Scan QR codes with your camera or images and generate custom QR codes - entirely in your browser. No backend, no tracking, no uploads.",
   keywords: ["QR code", "scanner", "generator", "privacy", "offline", "React", "Next.js"],
   applicationName: "RECQR",
+  manifest: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/manifest.webmanifest`,
+  icons: {
+    icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icons/recqr-192.png`,
+    apple: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icons/recqr-192.png`,
+  },
   authors: [{ name: "Flessan" }],
   generator: "Next.js",
   creator: "RECQR",

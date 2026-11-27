@@ -1,0 +1,31 @@
+{
+  "id": "./",
+  "name": "RECQR - QR Scanner & Generator",
+  "short_name": "RECQR",
+  "description": "A privacy-first QR scanner and generator that runs in your browser.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f2f4ff",
+  "theme_color": "#4f46e5",
+  "prefer_related_applications": false,
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "./icons/recqr-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/recqr-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

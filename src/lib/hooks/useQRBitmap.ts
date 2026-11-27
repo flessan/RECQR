@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { buildBitmap, type QRBitmap } from "@/lib/qr/renderer";
-import { generateMatrix } from "@/lib/qr/renderer";
+import { buildBitmap, generateMatrix, type QRBitmap } from "@/lib/qr/renderer";
 import type { LoadedLogo } from "@/lib/qr/scene";
 import type { GeneratorDesign, LogoSettings } from "@/lib/qr/types";
 
+interface LoadedLogoState {
+  source: string;
+  logo: LoadedLogo | null;
+}
+
 /**
- * Builds the QR bitmap. The matrix is computed synchronously with useMemo; the
- * logo is decoded/downscaled asynchronously because it needs an <img> decode.
+ * Matrix generation stays synchronous for an immediate preview. A selected
+ * logo is loaded separately and the bitmap is held back until that exact logo
+ * is ready, preventing exports from silently omitting a newly selected logo.
  */
 export function useQRBitmap(
   payload: string,
@@ -20,33 +25,48 @@ export function useQRBitmap(
     [payload, design.errorCorrection]
   );
 
-  const [loadedLogo, setLoadedLogo] = useState<LoadedLogo | null>(null);
+  const [loadedLogo, setLoadedLogo] = useState<LoadedLogoState | null>(null);
 
   useEffect(() => {
-    if (!logo.src) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLoadedLogo(null);
-      return;
-    }
     let cancelled = false;
-    void buildBitmap(payload, design, logo).then((b) => {
-      if (cancelled || !b.logo) return;
-      setLoadedLogo(b.logo);
-    });
+    // A render with a different object URL must never reuse the prior image.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoadedLogo(null);
+
+    if (!logo.src) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    void buildBitmap(payload, design, logo)
+      .then((bitmap) => {
+        if (!cancelled) {
+          setLoadedLogo({ source: logo.src!, logo: bitmap.logo });
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoadedLogo({ source: logo.src!, logo: null });
+        }
+      });
+
     return () => {
       cancelled = true;
     };
-    // We intentionally key off the primitive fields that affect the bitmap so
-    // that object identity changes in `design`/`logo` don't cause reloads.
+    // The decoded logo depends on its file and visual settings, not QR text.
+    // Avoid re-decoding it on every keystroke in the content field.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [logo.src, logo.sizeRatio, design.size, matrix.size, payload]);
+  }, [logo.src, logo.sizeRatio, logo.padding, logo.background, logo.roundedBg, design.size]);
 
-  return useMemo(
-    () => ({
+  const logoReady = !logo.src || loadedLogo?.source === logo.src;
+
+  return useMemo(() => {
+    if (!logoReady) return null;
+    return {
       size: matrix.size,
       modules: matrix.modules,
-      logo: loadedLogo,
-    }),
-    [matrix, loadedLogo]
-  );
+      logo: logo.src ? loadedLogo?.logo ?? null : null,
+    };
+  }, [matrix, logoReady, logo.src, loadedLogo]);
 }

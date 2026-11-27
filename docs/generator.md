@@ -1,147 +1,110 @@
 # Generator
 
-The generator builds QR codes in four steps:
+RECQR's generator is designed to make a useful QR code quickly. Choose what
+you want to share, enter the details, and the preview updates as you type.
+The default path does not require you to open any design settings.
 
-1. **Complete the content** - choose a preset and fill in its fields.
-2. **Design your QR code** - colors, size, quiet zone, error correction, and
-   module/finder styles.
-3. **Logo / image** - optionally embed a local image in the center.
-4. **Download** - export PNG, SVG, or WebP.
+## Quick creation
+
+1. Choose a content type.
+2. Enter the required details.
+3. Check the live preview.
+4. Download the QR code.
+
+Popular choices are shown first: Link, Text, Wi-Fi, and Contact. Choose
+**More types** for email, phone, SMS, WhatsApp, events, locations, social links,
+app links, image URLs, and video URLs.
+
+RECQR validates important fields before enabling export. Examples include
+website addresses, email addresses, phone numbers, Wi-Fi passwords, and
+latitude/longitude ranges. Messages are written in plain language and explain
+what needs to be corrected.
 
 ## Content presets
 
 | Preset | Payload |
 | ------ | ------- |
-| Link / Social / App / Image / Video | URL (image and video encode a link to where the media is hosted - QR codes cannot embed binary media) |
+| Link / Social / Image / Video | URL (image and video encode a link to hosted media; QR codes cannot embed binary media) |
+| App / deep link | A non-dangerous app URI or website URL |
 | Text | Free-form text |
-| E-mail | `mailto:` with subject/body |
-| Call | `tel:` |
-| SMS | `sms:` with optional body |
-| WhatsApp | `https://wa.me/<number>` |
-| Wi-Fi | `WIFI:T:…;S:…;P:…;;` (escapes `;`, `,`, `:`, `"`, `\`) |
-| vCard | vCard 3.0 |
+| E-mail | \`mailto:\` with subject/body |
+| Call | \`tel:\` |
+| SMS | \`sms:\` with optional body |
+| WhatsApp | \`https://wa.me/<number>\` |
+| Wi-Fi | \`WIFI:T:…;S:…;P:…;;\` |
+| Contact | vCard 3.0 |
 | Event | VEVENT (iCalendar) |
-| Geo | `geo:lat,lng` |
+| Location | \`geo:lat,lng\` |
 
-Your settings (except the in-memory logo) are saved to `localStorage` so the
-builder keeps its state on reload.
+Your content, design preferences, and output format are saved to \`localStorage\`.
+Uploaded logo image bytes and object URLs are not persisted across reloads.
 
-## Design controls
+## Optional design controls
+
+Open **Customize the design** only when you need more control:
 
 - Foreground and background colors.
-- Transparent background (applies to PNG/WebP; SVG is always transparent where
-  the background isn't drawn).
-- Size 128–1024 px.
+- Transparent background.
+- Output size from 128 to 1024 px.
 - Quiet zone in modules.
 - Error correction L/M/Q/H.
 - Dot style: square, rounded, dots.
 - Finder style: square, rounded, leaf.
-- Optional label frame with up to 40 characters of text.
+- Optional label frame with up to 40 characters.
 
-Only controls that actually affect the rendered output are exposed - the
-renderer draws modules directly instead of rasterizing a DOM screenshot.
+The defaults are intended to be easy to scan. Keep a strong contrast between
+the QR foreground and its background, and avoid removing the quiet zone.
 
-## Logo / image
+## Optional logo
 
-- Upload any image from your device. It is loaded into an object URL,
-  downscaled on a canvas, and composited into the QR - entirely in memory.
-- Adjust the logo size (12–30% of the QR), padding, background color, and
-  whether the background is rounded.
-- When a logo is present, error correction is forced to **H** so the code
-  remains scannable.
-- A warning appears when the logo covers more than ~25% of the code. Always
-  verify scannability with a real phone.
+Logos are optional and are processed locally. RECQR validates the image before
+using it, limits uploads to 8 MB, and downsizes the embedded image for output.
 
-> Your image is processed locally in your browser and is never uploaded.
+- Adjust the logo size (12–30% of the QR), padding, background colour, and
+  rounded background.
+- When a logo is present, error correction is forced to **H**.
+- Large logos show a warning. Smaller logos are more reliable; always test
+  printed or shared QR codes with a real phone.
 
 ## Export
 
-- **PNG** - rendered to an offscreen canvas at 2× for crisp output.
-- **SVG** - vector output; the logo is embedded as a base64 image.
-- **WebP** - smaller raster format where the browser supports it (falls back
-  to PNG otherwise).
+- **PNG** - raster image for everyday use.
+- **SVG** - vector output for scaling and print; an uploaded logo is embedded
+  inside the SVG.
+- **WebP** - smaller raster image where the browser supports it. RECQR falls
+  back to PNG and explains the fallback when WebP encoding is unavailable.
 
-Filenames use the `recqr-qr` prefix (e.g. `recqr-qr.png`, `recqr-qr.svg`).
-
-## Design system
-
-The UI is built on a small token + component layer in `src/app/globals.css`:
-
-- **Palette** - indigo primary, cyan secondary, lemon tertiary, with full light
-  and dark ramps exposed as `--color-*` variables.
-- **Shape/shadow** - `--md-radius-*` and `--ui-shadow*` (hard offset shadows).
-  These deliberately live *outside* `@theme`, because Tailwind v4 maps `@theme`
-  keys onto its own scales (`--spacing-md` once rewrote `max-w-md` to 16px).
-- **Components** - `.ui-card`, `.ui-btn` (+ `-primary/-tonal/-surface/-danger/
-  -ghost`, `-sm/-lg`), `.ui-icon-btn`, `.ui-chip` (+ `.is-active`),
-  `.ui-segment`, `.ui-field`, `.ui-label`, `.ui-badge`, `.ui-step`,
-  `.ui-display`, `.ui-underline`, `.ui-dotgrid`.
-- Legacy `.md-card` / `.md-*-button` classes are aliased onto the same system so
-  older pages stay visually consistent.
+Download generation reports errors instead of leaving the button stuck in a
+loading state. The filename starts with \`recqr-qr\`.
 
 ## Rendering geometry (single coordinate system)
 
 Preview, PNG, WebP and SVG all come from **one** layout model, so the preview is
 never an approximation of the download:
 
-```
+\`\`\`
 QR config -> computeLayout() -> QRLayout -> buildScene() -> Shape[]
                                                  |-- sceneToSvg()  (SVG / preview)
-                                                 `-- paintScene()  (Canvas -> PNG/WebP)
-```
+                                                 \`-- paintScene()  (Canvas -> PNG/WebP)
+\`\`\`
 
-`QRLayout` (`src/lib/qr/layout.ts`) is defined as:
+The renderer uses one coordinate system for modules, finder patterns, logo,
+quiet zone and optional label frame. The SVG and Canvas output share the same
+scene, keeping preview and download geometry aligned.
 
-```
-totalModules = matrixSize + quietZone * 2
-moduleSize   = requestedSize / totalModules
-qrPixelSize  = totalModules * moduleSize   (== requestedSize)
-offsetX/Y    = quietZone * moduleSize
-outputWidth  = qrPixelSize
-outputHeight = qrPixelSize + frameHeight   (frameHeight = 4 modules when a label is set)
-```
+## Automated QA
 
-Every module, finder pattern, logo and frame label is positioned relative to
-`offsetX/offsetY`, so the invariant `0 <= x <= outputWidth` and
-`0 <= y <= outputHeight` always holds. The SVG carries
-`viewBox="0 0 outputWidth outputHeight"` with matching `width`/`height`
-attributes; the preview only scales it with CSS (`width:100%; height:auto`).
+\`\`\`bash
+npm run lint
+npm test
+npm run test:pwa
+npm run build
+\`\`\`
 
-Additional renderer guarantees:
+Browser checks are also available with Playwright and Chromium:
 
-- Timing and alignment patterns are always drawn as solid squares, even in the
-  "rounded"/"dots" styles, because separated shapes there break real decoders.
-- A logo can never leave the QR data area, overlap a finder pattern, cover more
-  than 30% of the data area, or change the output dimensions; its aspect ratio
-  is preserved and error correction is forced to H.
-- Canvas exports use a device-pixel scale (2x by default, up to 4x for HiDPI)
-  without changing the coordinate system.
-
-## Automated visual / decode QA
-
-Beyond `npm run lint`, `npm test` and `npm run build`:
-
-```bash
-npm run dev                 # in one terminal
-
-npm run test:render         # Canvas + SVG rendered in real Chromium, decoded with jsQR
-npm run test:visual         # 7 viewports x 6 routes: overflow, clipping, preview decode
-npm run test:download       # downloads PNG/SVG from the UI and decodes them
-```
-
-These three scripts need `npm i --no-save playwright esbuild` once, and a
-Chromium/Chrome binary that can be selected with `CHROMIUM_PATH`. `npm test` itself also
-runs an offline round-trip suite that rasterises the generated SVG with resvg
-and decodes it with jsQR (`src/lib/qr/decode.test.ts`).
-
-## State architecture
-
-The generator is split into small components rather than one monolith:
-
-- `ContentSelector` - preset tabs and per-preset fields.
-- `DesignEditor` - colors, size, error correction, styles.
-- `LogoUploader` - local image handling.
-- `QRPreview` - live SVG preview (same renderer output as the download).
-- `DownloadControls` - format selection and download.
-- `useGeneratorState` - content/design/logo/output state with persistence.
-- `useQRBitmap` - builds the matrix and loaded logo.
+\`\`\`bash
+npm run test:render
+npm run test:visual
+npm run test:download
+\`\`\`

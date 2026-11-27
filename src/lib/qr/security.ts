@@ -3,10 +3,7 @@ import type { UrlPayload, UrlWarning } from "./types";
 /** Protocols that are safe to open from a scanned QR result. */
 export const SAFE_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
 
-/**
- * Protocols that must never be auto-opened because they can execute script
- * or exfiltrate data when handed to the browser.
- */
+/** Protocols that must never be opened because they can execute script or read local data. */
 export const BLOCKED_PROTOCOLS = new Set([
   "javascript:",
   "data:",
@@ -79,11 +76,11 @@ export function analyzeUrl(raw: string): UrlPayload | null {
   };
 }
 
-/** Whether a scanned string should be treated as a navigable URL. */
+/** Whether a decoded string is a URL or another explicit URI scheme. */
 export function isLikelyUrl(raw: string): boolean {
   const trimmed = raw.trim();
-  if (/^(https?|mailto|tel):/i.test(trimmed)) return true;
-  // Bare "example.com" - only treat as URL when it has a path-like dot+TLD.
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return true;
+  // Bare domains are accepted, but an ordinary sentence is not.
   return /^[a-z0-9-]+(\.[a-z0-9-]+)+(\/|[:?#]|$)/i.test(trimmed);
 }
 
