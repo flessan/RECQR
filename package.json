@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "test:visual": "node scripts/visual-check.mjs",
     "test:render": "node scripts/browser-render-check.mjs",
-    "test:download": "node scripts/download-check.mjs"
+    "test:download": "node scripts/download-check.mjs",
+    "test:pwa": "node scripts/check-pwa.mjs"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",
